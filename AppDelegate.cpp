@@ -23,7 +23,6 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "test.hpp"
 #include "GameScene.hpp"
 
 USING_NS_CC;

@@ -39,7 +39,7 @@ private:
     bool shoot_flag = 0;
     CC_SYNTHESIZE(int, m_iHP, iHP);
     CC_SYNTHESIZE(int, m_rHP, rHP);
-    CC_SYNTHESIZE(int, m_shoot_angle, original_angle);
+    CC_SYNTHESIZE(int, m_original_angle, original_angle);
     CC_SYNTHESIZE(int, m_changed_angle, changed_angle);
 };
 #endif

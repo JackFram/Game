@@ -67,14 +67,15 @@ bool TollgateScene::init()
     
     
     //add shooting line
-    auto shoot_line = Sprite::create("blood_full.png");
+    auto shoot_line = Sprite::create("shoot_line.png");
     auto player_position = ((Player*)this->getChildByTag(ObjectTag_Player))->getPosition();
     shoot_line->setPosition(player_position.x+BULLET_FIRE_DIS, player_position.y+BULLET_FIRE_DIS);
     shoot_line->setAnchorPoint(Vec2(0,0.5));
-    shoot_line->setScale(2);
+    shoot_line->setScale(1,2);
     shoot_line->setRotation(0);
     this->addChild(shoot_line, 20, ObjectTag_Shoot_Line);
     
+    //particle system
     
     this->schedule(schedule_selector(TollgateScene::logic));
     
@@ -98,6 +99,15 @@ bool TollgateScene::onContactBegin(PhysicsContact& contact)
         {
             Player * player = (Player *)nodeA;
             player->getAttack(10);
+            auto explode = ParticleSun::create();
+            explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
+            explode->setPosition(nodeB->getPosition());
+            explode->setDuration(0.5);
+            explode->setLife(0.1);
+            if(this->getChildByTag(ObjectTag_Explode)!=NULL)
+                this->removeChildByTag(ObjectTag_Explode);
+            this->addChild(explode, 30, ObjectTag_Explode);
+            //this->removeChild(explode);
         }
         nodeB->removeFromParent();
     }
@@ -108,6 +118,15 @@ bool TollgateScene::onContactBegin(PhysicsContact& contact)
         {
             Player * player = (Player *)nodeB;
             player->getAttack(10);
+            auto explode = ParticleSun::create();
+            explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
+            explode->setPosition(nodeA->getPosition());
+            explode->setDuration(0.5);
+            explode->setLife(0.1);
+            if(this->getChildByTag(ObjectTag_Explode)!=NULL)
+                this->removeChildByTag(ObjectTag_Explode);
+            this->addChild(explode, 30, ObjectTag_Explode);
+            //this->removeChild(explode);
         }
         nodeA->removeFromParent();
     }

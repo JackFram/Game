@@ -16,5 +16,7 @@
 #define ObjectTag_SSI        5
 #define ObjectTag_PT         6
 #define ObjectTag_Shoot_Line 7
+#define ObjectTag_Explode    8
+#define ObjectTag_PlayerSp   9
 
 #endif /* Object_Tag_h */

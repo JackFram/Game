@@ -13,7 +13,7 @@ Player::Player()
 {
     m_iHP = PLAYER_HP;
     m_rHP = PLAYER_HP;
-    m_shoot_angle = 0;
+    m_original_angle = 0;
 }
 
 Player::~Player()
@@ -46,7 +46,10 @@ bool Player::init()
     
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener,playerSp);
     this->setScale(0.25);
-    this->addChild(playerSp);
+    if(_direction == RIGHT)
+        playerSp->setFlippedX(1);
+    this->addChild(playerSp,20,ObjectTag_PlayerSp);
+
     auto body = PhysicsBody::createCircle((playerSp->getContentSize().width) * 0.4f);
     body->getShape(0)->setFriction(0);
     body->getShape(0)->setRestitution(1.0f);
@@ -104,8 +107,8 @@ void Player::shoot()
     //angle=angle%360;
     double angel_x = cos((double(angle)/180)*M_PI);
     double angel_y = sin((double(angle)/180)*M_PI);
-    bullet->setPosition(Vec2(this->getPosition().x+BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));
-    bullet->getPhysicsBody()->applyImpulse(Vect(BASE_STRENGTH*strength*angel_x, BASE_STRENGTH*strength*angel_y));
+    bullet->setPosition(Vec2(this->getPosition().x+_direction*BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));
+    bullet->getPhysicsBody()->applyImpulse(Vec2((BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
     this->getParent()->addChild(bullet);
 }
 
@@ -120,22 +123,39 @@ void Player::getAttack(int harm)
 
 void Player::logic(float dt)
 {
-    // Register an update function that checks to see if the CTRL key is pressed
-    // and if it is displays how long, otherwise tell the user to press it
-    //Node::update(delta);
-    this->getParent()->getChildByTag(ObjectTag_Shoot_Line)->setPosition(this->getPosition().x+BULLET_FIRE_DIS, this->getPosition().y+BULLET_FIRE_DIS);
-    this->getParent()->getChildByTag(ObjectTag_Shoot_Line)->setRotation(-(this->getchanged_angle()));
+
+    
+    /* fire line */
+    this->getParent()->getChildByTag(ObjectTag_Shoot_Line)->setPosition(this->getPosition().x+BULLET_FIRE_DIS*_direction, this->getPosition().y+BULLET_FIRE_DIS);
+    this->getParent()->getChildByTag(ObjectTag_Shoot_Line)->setRotation(-this->getchanged_angle());
+    
+    
+    /* key action */
     if(isKeyPressed(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
         this->moveToRight();
+        if(_direction == LEFT)
+        {
+            ((Sprite*)(this->getChildByTag(ObjectTag_PlayerSp)))->setFlippedX(0);
+            this->setchanged_angle(180-(this->getchanged_angle()));
+            this->setoriginal_angle(this->getchanged_angle());
+            _direction = RIGHT;
+        }
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
         this->moveToLeft();
+        if(_direction == RIGHT)
+        {
+            ((Sprite*)this->getChildByTag(ObjectTag_PlayerSp))->setFlippedX(1);
+            this->setchanged_angle(180-(this->getchanged_angle()));
+            this->setoriginal_angle(this->getchanged_angle());
+            _direction = LEFT;
+        }
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW)) {
-        this->setchanged_angle(this->getoriginal_angle()+int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_UP_ARROW)/800)));
+        this->setchanged_angle(this->getoriginal_angle()+_direction*int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_UP_ARROW)/800)));
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW)) {
-        this->setchanged_angle(this->getoriginal_angle()-int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_DOWN_ARROW)/800)));
+        this->setchanged_angle(this->getoriginal_angle()-_direction*int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_DOWN_ARROW)/800)));
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_SPACE)){
         ProgressTimer * pt = (ProgressTimer*)this->getParent()->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
