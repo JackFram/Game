@@ -14,6 +14,7 @@
 #include "Hp_Icon.hpp"
 #include "Strength_Saving_Icon.hpp"
 #include "lib.h"
+#include <math.h>
 
 
 USING_NS_CC;
@@ -38,6 +39,7 @@ private:
     bool shoot_flag = 0;
     CC_SYNTHESIZE(int, m_iHP, iHP);
     CC_SYNTHESIZE(int, m_rHP, rHP);
-    CC_SYNTHESIZE(int, m_shoot_angle, shoot_angle);
+    CC_SYNTHESIZE(int, m_shoot_angle, original_angle);
+    CC_SYNTHESIZE(int, m_changed_angle, changed_angle);
 };
 #endif

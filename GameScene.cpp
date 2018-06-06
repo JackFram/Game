@@ -66,6 +66,16 @@ bool TollgateScene::init()
     this->addChild(ssBar, 10, ObjectTag_SSI);
     
     
+    //add shooting line
+    auto shoot_line = Sprite::create("blood_full.png");
+    auto player_position = ((Player*)this->getChildByTag(ObjectTag_Player))->getPosition();
+    shoot_line->setPosition(player_position.x+BULLET_FIRE_DIS, player_position.y+BULLET_FIRE_DIS);
+    shoot_line->setAnchorPoint(Vec2(0,0.5));
+    shoot_line->setScale(2);
+    shoot_line->setRotation(0);
+    this->addChild(shoot_line, 20, ObjectTag_Shoot_Line);
+    
+    
     this->schedule(schedule_selector(TollgateScene::logic));
     
     return true;

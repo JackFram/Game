@@ -36,6 +36,11 @@ bool Player::init()
         // remove the key.  std::map.erase() doesn't care if the key doesnt exist
         if(keyCode == EventKeyboard::KeyCode::KEY_SPACE)
             this->shoot();
+        if(keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW||keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
+        {
+            int angle = this->getchanged_angle();
+            this->setoriginal_angle(angle);
+        }
         keys.erase(keyCode);
     };
     
@@ -56,7 +61,7 @@ bool Player::init()
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     pT->setPercentage(100);
     this->setTag(ObjectTag_Player);
-    
+
     return true;
 }
 
@@ -94,10 +99,13 @@ void Player::moveToLeft()
 void Player::shoot()
 {
     auto bullet = Bullet::create();
-    double weight = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
-    double angle = this->getshoot_angle();
+    double strength = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
+    int angle = this->getchanged_angle();
+    //angle=angle%360;
+    double angel_x = cos((double(angle)/180)*M_PI);
+    double angel_y = sin((double(angle)/180)*M_PI);
     bullet->setPosition(Vec2(this->getPosition().x+BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));
-    bullet->getPhysicsBody()->applyImpulse(Vect(7*weight, 20*weight));
+    bullet->getPhysicsBody()->applyImpulse(Vect(BASE_STRENGTH*strength*angel_x, BASE_STRENGTH*strength*angel_y));
     this->getParent()->addChild(bullet);
 }
 
@@ -115,6 +123,8 @@ void Player::logic(float dt)
     // Register an update function that checks to see if the CTRL key is pressed
     // and if it is displays how long, otherwise tell the user to press it
     //Node::update(delta);
+    this->getParent()->getChildByTag(ObjectTag_Shoot_Line)->setPosition(this->getPosition().x+BULLET_FIRE_DIS, this->getPosition().y+BULLET_FIRE_DIS);
+    this->getParent()->getChildByTag(ObjectTag_Shoot_Line)->setRotation(-(this->getchanged_angle()));
     if(isKeyPressed(EventKeyboard::KeyCode::KEY_RIGHT_ARROW)) {
         this->moveToRight();
     }
@@ -122,10 +132,10 @@ void Player::logic(float dt)
         this->moveToLeft();
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW)) {
-        
+        this->setchanged_angle(this->getoriginal_angle()+int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_UP_ARROW)/800)));
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW)) {
-        this->moveToLeft();
+        this->setchanged_angle(this->getoriginal_angle()-int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_DOWN_ARROW)/800)));
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_SPACE)){
         ProgressTimer * pt = (ProgressTimer*)this->getParent()->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);

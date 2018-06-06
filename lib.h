@@ -12,5 +12,6 @@
 #define BULLET_FIRE_DIS (20)
 #define BULLET_SCALE (0.1)
 #define MAX_STRENGTH (800)
+#define BASE_STRENGTH (20)
 
 #endif /* lib_h */
