@@ -82,7 +82,6 @@ bool GameScene::init()
     this->setTag(ObjectTag_GameScene);
     
     this->schedule(schedule_selector(GameScene::logic));
-    this->schedule(schedule_selector(Bullet::logic));
     
     return true;
 }
@@ -115,7 +114,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             //this->removeChild(explode);
         }
         nodeB->removeFromParent();
-        _is_shooting = false;
+        
     }
     else if(nodeA->getTag() == ObjectTag_Bullet)
     {
@@ -135,9 +134,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             //this->removeChild(explode);
         }
         nodeA->removeFromParent();
-        _is_shooting = false;
     }
-    
     return true;
     
 }

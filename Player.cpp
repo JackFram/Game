@@ -120,7 +120,6 @@ void Player::moveToLeft()
 }
 void Player::shoot()
 {
-    _is_shooting = true;
     auto bullet = Bullet::create();
     double strength = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
     strength = (strength>800) ? 800 : strength;
@@ -195,8 +194,8 @@ void Player::logic(float dt)
         ProgressTimer * pt = (ProgressTimer*)this->getParent()->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
         pt->setVisible(0);
     }
-    if(_is_shooting)
+    if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Bullet))
     {
-        
+        ((Bullet *)(this->getParent()->getChildByTag(ObjectTag_Bullet)))->logic(dt);
     }
 }

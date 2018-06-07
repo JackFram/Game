@@ -12,7 +12,7 @@
 #define BULLET_FIRE_DIS (40)
 #define BULLET_SCALE (0.3)
 #define MAX_STRENGTH (800)
-#define BASE_STRENGTH (150)
+#define BASE_STRENGTH (200)
 #define LEFT  (-1)
 #define RIGHT (1)
 #define BLOOD_FULL_PATH "Player/blood_full.png"
@@ -25,6 +25,5 @@
 
 
 static int _direction = RIGHT;
-static bool _is_shooting = false;
 
 #endif /* lib_h */

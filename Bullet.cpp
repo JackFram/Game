@@ -9,6 +9,7 @@
 #include "Bullet.hpp"
 #include <math.h>
 #include "lib.h"
+#include "iostream"
 
 USING_NS_CC;
 
@@ -27,6 +28,7 @@ bool Bullet::init()
     if(_direction == RIGHT)
         bullet->setFlippedX(1);
     bullet->setScale(BULLET_SCALE);
+    bullet->setAnchorPoint(Vec2(0,0.5));
     
     this->addChild(bullet,10,ObjectTag_BulletSp);
     auto body = PhysicsBody::createCircle((bullet->getContentSize().width)*BULLET_SCALE* 0.4f);
@@ -36,16 +38,18 @@ bool Bullet::init()
     body->setCollisionBitmask(1);   // 0001
     body->setContactTestBitmask(1); // 0001
     this->setPhysicsBody(body);
-    this->setTag(ObjectTag_Bullet);
+    this->setTag(ObjectTag_Bullet); 
     /* 给子弹添加推力 */
     return true;
 }
 
 void Bullet::logic(float dt)
 {
-    if(_is_shooting == true)
-    {
         Vec2 velocity = this->getPhysicsBody()->getVelocity();
-        this->getChildByTag(ObjectTag_BulletSp)->setRotation((atanf(velocity.y/velocity.x)*180)/M_PI);
-    }
+        this->getChildByTag(ObjectTag_BulletSp)->setRotation((atanf(-velocity.y/velocity.x)*180)/M_PI);
+        if(velocity.x<0)
+            ((Sprite *)(this->getChildByTag(ObjectTag_BulletSp)))->setFlippedX(0);
+        else
+            ((Sprite *)(this->getChildByTag(ObjectTag_BulletSp)))->setFlippedX(1);
+
 }
