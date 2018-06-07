@@ -15,12 +15,13 @@
 #include "Strength_Saving_Icon.hpp"
 
 USING_NS_CC;
-class TollgateScene : public Layer
+
+class GameScene : public Layer
 {
 public:
-    ~TollgateScene();
+    ~GameScene();
     static Scene* createScene();
-    CREATE_FUNC(TollgateScene);
+    CREATE_FUNC(GameScene);
     virtual bool init();
     virtual void onExit() override;
     void logic(float dt);

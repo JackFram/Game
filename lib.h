@@ -15,6 +15,9 @@
 #define BASE_STRENGTH (20)
 #define LEFT  (-1)
 #define RIGHT (1)
+#define BLOOD_FULL_PATH "Player/blood_full.png"
+#define BLOOD_EMPTY_PATH "Player/blood_empty.png"
+#define SHOOT_LINE_PATH "Player/shoot_line.png"
 
 static int _direction = RIGHT;
 

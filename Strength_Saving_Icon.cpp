@@ -21,10 +21,10 @@ Strength_Saving_Icon::~Strength_Saving_Icon(){
 bool Strength_Saving_Icon::init(){
     if(!Node::init())
         return false;
-    Sprite *bgSprite = Sprite::create("blood_empty.png");
+    Sprite *bgSprite = Sprite::create("Player/blood_empty.png");
     this->addChild(bgSprite, 1, 1);
     
-    Sprite *ssSprite = Sprite::create("blood_full.png");
+    Sprite *ssSprite = Sprite::create("Player/blood_full.png");
     
     auto progressTimer = ProgressTimer::create(ssSprite);
     

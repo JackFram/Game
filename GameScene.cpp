@@ -6,13 +6,12 @@
 //
 //
 #include "GameScene.hpp"
-#include <iostream>
 
 
-TollgateScene::~TollgateScene()
+GameScene::~GameScene()
 {
 }
-Scene* TollgateScene::createScene()
+Scene* GameScene::createScene()
 {
     auto scene = Scene::createWithPhysics();
     /* 微重力世界 */
@@ -33,17 +32,17 @@ Scene* TollgateScene::createScene()
     node->setPhysicsBody(body);
     scene->addChild(node);
     
-    auto layer = TollgateScene::create();
+    auto layer = GameScene::create();
     scene->addChild(layer, 10);
     
     return scene;
 }
 
-void TollgateScene::logic(float dt){
+void GameScene::logic(float dt){
     m_player->logic(dt);
 }
 
-bool TollgateScene::init()
+bool GameScene::init()
 {
     if (!Layer::init())
     {
@@ -52,7 +51,7 @@ bool TollgateScene::init()
     
     /* 碰撞监听 */
     auto contactListener = EventListenerPhysicsContact::create();
-    contactListener->onContactBegin = CC_CALLBACK_1(TollgateScene::onContactBegin, this);
+    contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
     
     /* 创建主角 */
@@ -67,7 +66,7 @@ bool TollgateScene::init()
     
     
     //add shooting line
-    auto shoot_line = Sprite::create("shoot_line.png");
+    auto shoot_line = Sprite::create(SHOOT_LINE_PATH);
     auto player_position = ((Player*)this->getChildByTag(ObjectTag_Player))->getPosition();
     shoot_line->setPosition(player_position.x+BULLET_FIRE_DIS, player_position.y+BULLET_FIRE_DIS);
     shoot_line->setAnchorPoint(Vec2(0,0.5));
@@ -76,13 +75,14 @@ bool TollgateScene::init()
     this->addChild(shoot_line, 20, ObjectTag_Shoot_Line);
     
     //particle system
+    this->setTag(ObjectTag_GameScene);
     
-    this->schedule(schedule_selector(TollgateScene::logic));
+    this->schedule(schedule_selector(GameScene::logic));
     
     return true;
 }
 
-bool TollgateScene::onContactBegin(PhysicsContact& contact)
+bool GameScene::onContactBegin(PhysicsContact& contact)
 {
     /* collision detection */
     auto nodeA = (Sprite*)contact.getShapeA()->getBody()->getNode();
@@ -135,7 +135,7 @@ bool TollgateScene::onContactBegin(PhysicsContact& contact)
     
 }
 
-void TollgateScene::onExit()
+void GameScene::onExit()
 {
     Layer::onExit();
     _eventDispatcher->removeEventListenersForTarget(this);

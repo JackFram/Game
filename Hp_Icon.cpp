@@ -20,10 +20,10 @@ Hp_Icon::~Hp_Icon(){
 bool Hp_Icon::init(){
     if(!Node::init())
         return false;
-    Sprite *bgSprite = Sprite::create("blood_empty.png");
+    Sprite *bgSprite = Sprite::create(BLOOD_EMPTY_PATH);
     this->addChild(bgSprite, 1, 1);
     
-    Sprite *hpSprite = Sprite::create("blood_full.png");
+    Sprite *hpSprite = Sprite::create(BLOOD_FULL_PATH);
     
     auto progressTimer = ProgressTimer::create(hpSprite);
     

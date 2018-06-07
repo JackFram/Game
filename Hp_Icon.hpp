@@ -10,6 +10,7 @@
 #define Hp_Icon_hpp
 #include "cocos2d.h"
 #include "Object_Tag.h"
+#include "lib.h"
 
 class Hp_Icon : public cocos2d::Node{
 public:

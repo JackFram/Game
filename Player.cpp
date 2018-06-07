@@ -103,6 +103,7 @@ void Player::shoot()
 {
     auto bullet = Bullet::create();
     double strength = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
+    strength = (strength>800) ? 800 : strength;
     int angle = this->getchanged_angle();
     //angle=angle%360;
     double angel_x = cos((double(angle)/180)*M_PI);

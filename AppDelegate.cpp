@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "GameScene.hpp"
+
 
 USING_NS_CC;
 
@@ -47,7 +47,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0 / 60);
     
-    auto scene = TollgateScene::createScene();
+    auto scene = MenuScene::createScene();
     director->runWithScene(scene);
     
     return true;

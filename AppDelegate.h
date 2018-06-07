@@ -28,6 +28,8 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "GameScene.hpp"
+#include "MenuScene.hpp"
 
 class  AppDelegate : private cocos2d::Application
 {

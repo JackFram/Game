@@ -18,5 +18,7 @@
 #define ObjectTag_Shoot_Line 7
 #define ObjectTag_Explode    8
 #define ObjectTag_PlayerSp   9
+#define ObjectTag_BG         10
+#define ObjectTag_GameScene  11
 
 #endif /* Object_Tag_h */
