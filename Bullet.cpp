@@ -7,6 +7,7 @@
 //
 
 #include "Bullet.hpp"
+#include <math.h>
 #include "lib.h"
 
 USING_NS_CC;
@@ -22,11 +23,12 @@ Bullet::Bullet(){
 
 bool Bullet::init()
 {
-    auto bullet = Sprite::create("test.png");
-    
+    auto bullet = Sprite::create(BULLET1_PATH);
+    if(_direction == RIGHT)
+        bullet->setFlippedX(1);
     bullet->setScale(BULLET_SCALE);
     
-    this->addChild(bullet);
+    this->addChild(bullet,10,ObjectTag_BulletSp);
     auto body = PhysicsBody::createCircle((bullet->getContentSize().width)*BULLET_SCALE* 0.4f);
     body->getShape(0)->setFriction(0);
     body->getShape(0)->setRestitution(1.0f);
@@ -41,5 +43,9 @@ bool Bullet::init()
 
 void Bullet::logic(float dt)
 {
-    
+    if(_is_shooting == true)
+    {
+        Vec2 velocity = this->getPhysicsBody()->getVelocity();
+        this->getChildByTag(ObjectTag_BulletSp)->setRotation((atanf(velocity.y/velocity.x)*180)/M_PI);
+    }
 }

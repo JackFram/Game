@@ -22,7 +22,7 @@ bool Strength_Saving_Icon::init(){
     if(!Node::init())
         return false;
     Sprite *bgSprite = Sprite::create("Player/blood_empty.png");
-    this->addChild(bgSprite, 1, 1);
+    this->addChild(bgSprite, 0, 1);
     
     Sprite *ssSprite = Sprite::create("Player/blood_full.png");
     

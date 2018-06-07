@@ -21,6 +21,8 @@ bool Hp_Icon::init(){
     if(!Node::init())
         return false;
     Sprite *bgSprite = Sprite::create(BLOOD_EMPTY_PATH);
+    bgSprite->setPosition(Vec2(0, 140));
+    bgSprite->setScale(4);
     this->addChild(bgSprite, 1, 1);
     
     Sprite *hpSprite = Sprite::create(BLOOD_FULL_PATH);
@@ -40,7 +42,7 @@ bool Hp_Icon::init(){
     progressTimer->setPosition(Vec2(0, 140));
     progressTimer->setScale(4);
     progressTimer->setTag(ObjectTag_PT);
-    this->addChild(progressTimer, 0);
+    this->addChild(progressTimer, 2);
     
     return true;
 }

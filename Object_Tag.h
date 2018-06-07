@@ -20,5 +20,6 @@
 #define ObjectTag_PlayerSp   9
 #define ObjectTag_BG         10
 #define ObjectTag_GameScene  11
+#define ObjectTag_BulletSp   12
 
 #endif /* Object_Tag_h */

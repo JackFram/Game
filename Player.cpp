@@ -21,7 +21,12 @@ Player::~Player()
 }
 bool Player::init()
 {
-    playerSp = Sprite::create("HelloWorld.png");
+    /* player img load */
+    playerSp = Sprite::create(PLAYER_GROVEL_PATH);
+    this->setScale(0.25);
+    if(_direction == LEFT)
+        playerSp->setFlippedX(1);
+    this->addChild(playerSp,20,ObjectTag_PlayerSp);
     
     auto eventListener = EventListenerKeyboard::create();
     eventListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode,Event* event){
@@ -30,12 +35,30 @@ bool Player::init()
         if(keys.find(keyCode) == keys.end()){
             keys[keyCode] = std::chrono::high_resolution_clock::now();
         }
+        
+        if(keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+        {
+            this->removeChildByTag(ObjectTag_PlayerSp);
+            playerSp = Sprite::create(PLAYER_STAND_PATH);
+            this->setScale(0.25);
+            if(_direction == LEFT)
+                playerSp->setFlippedX(1);
+            this->addChild(playerSp,20,ObjectTag_PlayerSp);
+        }
     };
     
     eventListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event){
         // remove the key.  std::map.erase() doesn't care if the key doesnt exist
         if(keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+        {
             this->shoot();
+            this->removeChildByTag(ObjectTag_PlayerSp);
+            playerSp = Sprite::create(PLAYER_GROVEL_PATH);
+            this->setScale(0.25);
+            if(_direction == LEFT)
+                playerSp->setFlippedX(1);
+            this->addChild(playerSp,20,ObjectTag_PlayerSp);
+        }
         if(keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW||keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
         {
             int angle = this->getchanged_angle();
@@ -44,13 +67,11 @@ bool Player::init()
         keys.erase(keyCode);
     };
     
-    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener,playerSp);
-    this->setScale(0.25);
-    if(_direction == RIGHT)
-        playerSp->setFlippedX(1);
-    this->addChild(playerSp,20,ObjectTag_PlayerSp);
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener,this);
+    
+    // physic body added
 
-    auto body = PhysicsBody::createCircle((playerSp->getContentSize().width) * 0.4f);
+    auto body = PhysicsBody::createCircle((playerSp->getContentSize().width) * 0.3f);
     body->getShape(0)->setFriction(0);
     body->getShape(0)->setRestitution(1.0f);
     body->setCategoryBitmask(1);    // 0001
@@ -69,8 +90,6 @@ bool Player::init()
 }
 
 bool Player::isKeyPressed(EventKeyboard::KeyCode code) {
-    // Check if the key is currently pressed by seeing it it's in the std::map keys
-    // In retrospect, keys is a terrible name for a key/value paried datatype isnt it?
     if(keys.find(code) != keys.end())
         return true;
     return false;
@@ -101,6 +120,7 @@ void Player::moveToLeft()
 }
 void Player::shoot()
 {
+    _is_shooting = true;
     auto bullet = Bullet::create();
     double strength = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
     strength = (strength>800) ? 800 : strength;
@@ -174,5 +194,9 @@ void Player::logic(float dt)
         this->getPhysicsBody()->setVelocity(Vec2(0, velocity.y));
         ProgressTimer * pt = (ProgressTimer*)this->getParent()->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
         pt->setVisible(0);
+    }
+    if(_is_shooting)
+    {
+        
     }
 }
