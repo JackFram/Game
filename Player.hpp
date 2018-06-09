@@ -41,5 +41,6 @@ private:
     CC_SYNTHESIZE(int, m_rHP, rHP);
     CC_SYNTHESIZE(int, m_original_angle, original_angle);
     CC_SYNTHESIZE(int, m_changed_angle, changed_angle);
+    CC_SYNTHESIZE(bool, m_finished, fini);
 };
 #endif

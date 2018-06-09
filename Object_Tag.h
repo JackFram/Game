@@ -21,5 +21,7 @@
 #define ObjectTag_BG         10
 #define ObjectTag_GameScene  11
 #define ObjectTag_BulletSp   12
+#define ObjectTag_Enemy      13
+#define ObjectTag_EnemySp    14
 
 #endif /* Object_Tag_h */

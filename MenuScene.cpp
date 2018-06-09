@@ -26,7 +26,7 @@ bool MenuScene::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
-    Sprite * bg = Sprite::create("background/bg1.jpeg");
+    Sprite * bg = Sprite::create(MENU_BG_PATH);
     bg->setPosition(Vec2(origin.x+visibleSize.width/2,origin.y+visibleSize.height/2));
     
     auto gameButton = MenuItemImage::create("menu/home1_0.png", "menu/home1.png", CC_CALLBACK_1(MenuScene::OnClickStart, this));

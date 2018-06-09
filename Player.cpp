@@ -14,6 +14,7 @@ Player::Player()
     m_iHP = PLAYER_HP;
     m_rHP = PLAYER_HP;
     m_original_angle = 0;
+    m_finished = false;
 }
 
 Player::~Player()
@@ -35,8 +36,9 @@ bool Player::init()
         if(keys.find(keyCode) == keys.end()){
             keys[keyCode] = std::chrono::high_resolution_clock::now();
         }
+        // lock up our key
         
-        if(keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+        if(keyCode == EventKeyboard::KeyCode::KEY_SPACE&&!this->getfini())
         {
             this->removeChildByTag(ObjectTag_PlayerSp);
             playerSp = Sprite::create(PLAYER_STAND_PATH);
@@ -49,7 +51,8 @@ bool Player::init()
     
     eventListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event){
         // remove the key.  std::map.erase() doesn't care if the key doesnt exist
-        if(keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+        // unlock our key
+        if(keyCode == EventKeyboard::KeyCode::KEY_SPACE&&!this->getfini())
         {
             this->shoot();
             this->removeChildByTag(ObjectTag_PlayerSp);
@@ -130,6 +133,9 @@ void Player::shoot()
     bullet->setPosition(Vec2(this->getPosition().x+_direction*BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));
     bullet->getPhysicsBody()->applyImpulse(Vec2((BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
     this->getParent()->addChild(bullet);
+    ProgressTimer * pt = (ProgressTimer*)this->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
+    pt->setVisible(0);
+    this->setfini(true);
 }
 
 void Player::getAttack(int harm)
@@ -160,7 +166,7 @@ void Player::logic(float dt)
             this->setoriginal_angle(this->getchanged_angle());
             _direction = RIGHT;
         }
-    }
+    }//move to right and change our shoot line
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_LEFT_ARROW)) {
         this->moveToLeft();
         if(_direction == RIGHT)
@@ -170,15 +176,19 @@ void Player::logic(float dt)
             this->setoriginal_angle(this->getchanged_angle());
             _direction = LEFT;
         }
-    }
+    }//move to left and change our shoot line
+    
+    //adjust our shooting angle
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_UP_ARROW)) {
         this->setchanged_angle(this->getoriginal_angle()+_direction*int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_UP_ARROW)/800)));
     }
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_DOWN_ARROW)) {
         this->setchanged_angle(this->getoriginal_angle()-_direction*int(90*(keyPressedDuration(EventKeyboard::KeyCode::KEY_DOWN_ARROW)/800)));
     }
+    
+    //pressing space to accumulate strength
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_SPACE)){
-        ProgressTimer * pt = (ProgressTimer*)this->getParent()->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
+        ProgressTimer * pt = (ProgressTimer*)this->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
         pt->setVisible(1);
         if(keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE)>MAX_STRENGTH)
         {
@@ -189,13 +199,10 @@ void Player::logic(float dt)
         }
     }
     else{
+        //set our player to be stable
         auto velocity = this->getPhysicsBody()->getVelocity();
         this->getPhysicsBody()->setVelocity(Vec2(0, velocity.y));
-        ProgressTimer * pt = (ProgressTimer*)this->getParent()->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
+        ProgressTimer * pt = (ProgressTimer*)this->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
         pt->setVisible(0);
-    }
-    if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Bullet))
-    {
-        ((Bullet *)(this->getParent()->getChildByTag(ObjectTag_Bullet)))->logic(dt);
     }
 }

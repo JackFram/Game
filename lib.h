@@ -8,11 +8,14 @@
 
 #ifndef lib_h
 #define lib_h
+#define PLAYER_ROUND  1
+#define ENEMY_ROUND  2
 #define PLAYER_HP (100)
-#define BULLET_FIRE_DIS (40)
+#define ENEMY_HP  (100)
+#define BULLET_FIRE_DIS (20)
 #define BULLET_SCALE (0.3)
-#define MAX_STRENGTH (800)
-#define BASE_STRENGTH (200)
+#define MAX_STRENGTH (1600)
+#define BASE_STRENGTH (46)
 #define LEFT  (-1)
 #define RIGHT (1)
 #define BLOOD_FULL_PATH "Player/blood_full.png"
@@ -20,7 +23,8 @@
 #define SHOOT_LINE_PATH "Player/shoot_line.png"
 #define PLAYER_GROVEL_PATH "Player/player_grovel.png"
 #define PLAYER_STAND_PATH "Player/player_stand.png"
-#define SCENE1_MAP_PATH "background/bg2.jpg"
+#define SCENE1_MAP_PATH "background/bg1.jpeg"
+#define MENU_BG_PATH "background/bg3.jpg"
 #define BULLET1_PATH  "Bullet/bullet1.png"
 
 

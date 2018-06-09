@@ -34,14 +34,13 @@ bool Strength_Saving_Icon::init(){
     //从左到右
     progressTimer->setMidpoint(Point(0, 0.5));
     progressTimer->setBarChangeRate(Point(1, 0));
-    progressTimer->setVisible(0);
-    
+        
     progressTimer->setMidpoint(Point(0, 0.5));
     progressTimer->setBarChangeRate(Point(1, 0));
     
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    progressTimer->setPosition(Vec2(visibleSize.width*0.5f, 400));
-    progressTimer->setScale(18, 4);
+    
+    progressTimer->setPosition(Vec2(0, 2400));
+    progressTimer->setScale(80, 16);
     progressTimer->setTag(ObjectTag_PT);
     this->addChild(progressTimer, 0);
     

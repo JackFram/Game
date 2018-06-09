@@ -31,7 +31,7 @@ bool Bullet::init()
     bullet->setAnchorPoint(Vec2(0,0.5));
     
     this->addChild(bullet,10,ObjectTag_BulletSp);
-    auto body = PhysicsBody::createCircle((bullet->getContentSize().width)*BULLET_SCALE* 0.4f);
+    auto body = PhysicsBody::createCircle((bullet->getContentSize().width)*BULLET_SCALE* 0.2f);
     body->getShape(0)->setFriction(0);
     body->getShape(0)->setRestitution(1.0f);
     body->setCategoryBitmask(1);    // 0001

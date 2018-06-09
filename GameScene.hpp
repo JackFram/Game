@@ -13,12 +13,14 @@
 #include "Player.hpp"
 #include "Bullet.hpp"
 #include "Strength_Saving_Icon.hpp"
+#include "Enemy.hpp"
 
 USING_NS_CC;
 
 class GameScene : public Layer
 {
 public:
+    GameScene();
     ~GameScene();
     static Scene* createScene();
     CREATE_FUNC(GameScene);
@@ -30,6 +32,7 @@ public:
 private:
     Player * m_player;
     bool collision_flag;
+    CC_SYNTHESIZE(int, time_counter, tc);
 };
 
 #endif /* GameScene_hpp */
