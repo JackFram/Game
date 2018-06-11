@@ -53,7 +53,7 @@ void GameScene::logic(float dt){
     {
         ((Bullet *)(m_player->getParent()->getChildByTag(ObjectTag_Bullet)))->logic(dt);
     }
-    if( m_player->getfini() == false){
+    if( m_player->getfini() == false||this->getChildByTag(ObjectTag_Enemy)==NULL){
         m_player->logic(dt);
         if(this->getChildByTag(ObjectTag_Enemy))
             ((Enemy *)(this->getChildByTag(ObjectTag_Enemy)))->logic(dt);
@@ -70,13 +70,18 @@ void GameScene::logic(float dt){
         if(time_counter%1000 == 0)
             m_player->setfini(true);
     }
-    else if( m_player->getfini() == true)
+    else if( m_player->getfini() == true && this->getChildByTag(ObjectTag_Enemy))
     {
-        printf("enemy round");
         m_player->getPhysicsBody()->setVelocity(Vec2::ZERO);
-        this->getChildByTag(ObjectTag_Enemy)->getPhysicsBody()->setVelocity(Vec2::ZERO);
         time_counter = 0;
+        if(this->getChildByTag(ObjectTag_Enemy)&&(!this->getChildByTag(ObjectTag_Bullet)))
+        {
+            this->getChildByTag(ObjectTag_Enemy)->getPhysicsBody()->setVelocity(Vec2::ZERO);
+            ((Enemy*)this->getChildByTag(ObjectTag_Enemy))->Attack();
+        }
+        //m_player->setfini(false);
     }
+    ((Label *)(m_player->getChildByTag(ObjectTag_Money)))->setString(StringUtils::format("Money: %d",m_player->getmoney()));
 }
 
 bool GameScene::init()
@@ -101,6 +106,28 @@ bool GameScene::init()
     auto enemy = Enemy::create();
     enemy->setPosition(Point(visibleSize.width * 0.75f, 15));
     this->addChild(enemy, 5, ObjectTag_Enemy);
+    
+    /* 钻石数量 */
+    auto layer_money = Label::createWithSystemFont("Money: 0", "Arial", 30);
+    layer_money->setScale(2);
+    layer_money->setPosition(Vec2(1650,2400));
+    layer_money->setString(StringUtils::format("Money: %d",1));
+    layer_money->setTag(ObjectTag_Money);
+    m_player->addChild(layer_money, 2);
+    
+    /* return button */
+    auto gameButton = MenuItemImage::create("menu/return_0.png", "menu/return.png", CC_CALLBACK_1(GameScene::OnClickReturn, this));
+    gameButton->setScale(0.75);
+    gameButton->setPosition(Director::getInstance()->convertToGL(Vec2(0,480)));
+    
+    /* restart button */
+    auto gameReturnButton = MenuItemImage::create("menu/game3_0.png", "menu/game3.png", CC_CALLBACK_1(GameScene::OnClickReStart, this));
+    gameReturnButton->setScale(0.8);
+    gameReturnButton->setPosition(Director::getInstance()->convertToGL(Vec2(0,580)));
+    
+    Menu * mu = Menu::create(gameButton, gameReturnButton, NULL);
+    mu->setPosition(Vec2(-1750,2250));
+    m_player->addChild(mu,1);
     
     //add strength saving icon
     auto ssBar = Strength_Saving_Icon::create();
@@ -160,7 +187,10 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             this->removeChildByTag(ObjectTag_Explode);
         this->addChild(explode, 30, ObjectTag_Explode);
         nodeB->removeFromParent();
-        
+        if(!m_player->getfini()&&this->getChildByTag(ObjectTag_Enemy))
+            m_player->setfini(true);
+        else if(m_player->getfini())
+            m_player->setfini(false);
     }
     else if(nodeA->getTag() == ObjectTag_Bullet)
     {
@@ -173,7 +203,8 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         else if(nodeB->getTag() == ObjectTag_Enemy)
         {
             Enemy * enemy = (Enemy *)nodeB;
-            enemy->getAttack(10);
+            if(this->getChildByTag(ObjectTag_Player))
+                enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
         auto explode = ParticleSun::create();
         explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
@@ -184,6 +215,11 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             this->removeChildByTag(ObjectTag_Explode);
         this->addChild(explode, 30, ObjectTag_Explode);
         nodeA->removeFromParent();
+        if(!m_player->getfini()&&this->getChildByTag(ObjectTag_Enemy))
+            m_player->setfini(true);
+        else if(m_player->getfini())
+            m_player->setfini(false);
+        
     }
     return true;
     
@@ -193,4 +229,15 @@ void GameScene::onExit()
 {
     Layer::onExit();
     _eventDispatcher->removeEventListenersForTarget(this);
+}
+
+void GameScene::OnClickReturn(cocos2d::Ref *pSender)
+{
+    
+    Director::getInstance()->popScene();
+}
+
+void GameScene::OnClickReStart(cocos2d::Ref *pSender)
+{
+    Director::getInstance()->replaceScene(GameScene::createScene());
 }

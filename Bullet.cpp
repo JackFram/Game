@@ -21,10 +21,16 @@ Bullet::Bullet(){
     
 }
 
+Bullet::Bullet(std::string path)
+{
+    this->setbullet_path(path);
+}
+
 
 bool Bullet::init()
 {
-    auto bullet = Sprite::create(BULLET1_PATH);
+    Sprite * bullet;
+    bullet = Sprite::create(this->getbullet_path());
     if(_direction == RIGHT)
         bullet->setFlippedX(1);
     bullet->setScale(BULLET_SCALE);

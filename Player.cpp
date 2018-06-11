@@ -15,6 +15,8 @@ Player::Player()
     m_rHP = PLAYER_HP;
     m_original_angle = 0;
     m_finished = false;
+    m_weapon_id = 2;
+    m_money = 200;
 }
 
 Player::~Player()
@@ -28,6 +30,10 @@ bool Player::init()
     if(_direction == LEFT)
         playerSp->setFlippedX(1);
     this->addChild(playerSp,20,ObjectTag_PlayerSp);
+    
+    /* weapon img load */
+    auto weapon = Weapon::create(this->getweapon_id());
+    this->addChild(weapon,19,ObjectTag_Weapon);
     
     auto eventListener = EventListenerKeyboard::create();
     eventListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode,Event* event){
@@ -46,6 +52,7 @@ bool Player::init()
             if(_direction == LEFT)
                 playerSp->setFlippedX(1);
             this->addChild(playerSp,20,ObjectTag_PlayerSp);
+            ((Sprite*)(this->getChildByTag(ObjectTag_Weapon)->getChildByTag(ObjectTag_WeaponSp)))->setRotation(-30*_direction);
         }
     };
     
@@ -61,6 +68,7 @@ bool Player::init()
             if(_direction == LEFT)
                 playerSp->setFlippedX(1);
             this->addChild(playerSp,20,ObjectTag_PlayerSp);
+            ((Sprite*)(this->getChildByTag(ObjectTag_Weapon)->getChildByTag(ObjectTag_WeaponSp)))->setRotation(0);
         }
         if(keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW||keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
         {
@@ -93,6 +101,8 @@ bool Player::init()
 }
 
 bool Player::isKeyPressed(EventKeyboard::KeyCode code) {
+    if(this->getfini()==true)
+        return false;
     if(keys.find(code) != keys.end())
         return true;
     return false;
@@ -123,9 +133,9 @@ void Player::moveToLeft()
 }
 void Player::shoot()
 {
-    auto bullet = Bullet::create();
+    auto bullet = Bullet::create(((Weapon *)(this->getChildByTag(ObjectTag_Weapon)))->getbullet_path());
     double strength = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
-    strength = (strength>800) ? 800 : strength;
+    strength = (strength>MAX_STRENGTH) ? MAX_STRENGTH : strength;
     int angle = this->getchanged_angle();
     //angle=angle%360;
     double angel_x = cos((double(angle)/180)*M_PI);
@@ -133,17 +143,24 @@ void Player::shoot()
     bullet->setPosition(Vec2(this->getPosition().x+_direction*BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));
     bullet->getPhysicsBody()->applyImpulse(Vec2((BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
     this->getParent()->addChild(bullet);
+    //this->setfini(true);
     ProgressTimer * pt = (ProgressTimer*)this->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
     pt->setVisible(0);
-    this->setfini(true);
 }
 
 void Player::getAttack(int harm)
 {
+    if(this->getChildByTag(ObjectTag_Weapon))
+        harm = harm*((Weapon *)this->getChildByTag(ObjectTag_Weapon))->getdef();
     this->setiHP(this->getiHP()-harm);
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     int res = 100*this->getiHP()/this->getrHP();
     pT->setPercentage(res);
+    if(this->getiHP()<=0)
+    {
+        printf("you suck");
+        exit(0);
+    }
 }
 
 
@@ -161,6 +178,7 @@ void Player::logic(float dt)
         this->moveToRight();
         if(_direction == LEFT)
         {
+            ((Sprite*)(this->getChildByTag(ObjectTag_Weapon)->getChildByTag(ObjectTag_WeaponSp)))->setFlippedX(0);
             ((Sprite*)(this->getChildByTag(ObjectTag_PlayerSp)))->setFlippedX(0);
             this->setchanged_angle(180-(this->getchanged_angle()));
             this->setoriginal_angle(this->getchanged_angle());
@@ -171,6 +189,8 @@ void Player::logic(float dt)
         this->moveToLeft();
         if(_direction == RIGHT)
         {
+            
+            ((Sprite*)(this->getChildByTag(ObjectTag_Weapon)->getChildByTag(ObjectTag_WeaponSp)))->setFlippedX(1);
             ((Sprite*)this->getChildByTag(ObjectTag_PlayerSp))->setFlippedX(1);
             this->setchanged_angle(180-(this->getchanged_angle()));
             this->setoriginal_angle(this->getchanged_angle());

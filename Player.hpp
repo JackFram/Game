@@ -14,6 +14,7 @@
 #include "Hp_Icon.hpp"
 #include "Strength_Saving_Icon.hpp"
 #include "lib.h"
+#include "Weapon.hpp"
 #include <math.h>
 
 
@@ -42,5 +43,7 @@ private:
     CC_SYNTHESIZE(int, m_original_angle, original_angle);
     CC_SYNTHESIZE(int, m_changed_angle, changed_angle);
     CC_SYNTHESIZE(bool, m_finished, fini);
+    CC_SYNTHESIZE(int, m_weapon_id, weapon_id);
+    CC_SYNTHESIZE(int, m_money, money);
 };
 #endif

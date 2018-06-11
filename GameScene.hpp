@@ -24,9 +24,11 @@ public:
     ~GameScene();
     static Scene* createScene();
     CREATE_FUNC(GameScene);
-    virtual bool init();
+    virtual bool init() override;
     virtual void onExit() override;
     void logic(float dt);
+    void OnClickReturn(Ref * pSender);
+    void OnClickReStart(Ref * pSender);
     /* collision detection */
     bool onContactBegin(PhysicsContact& contact);
 private:

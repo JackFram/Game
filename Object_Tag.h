@@ -23,5 +23,8 @@
 #define ObjectTag_BulletSp   12
 #define ObjectTag_Enemy      13
 #define ObjectTag_EnemySp    14
+#define ObjectTag_Weapon     15
+#define ObjectTag_WeaponSp   16
+#define ObjectTag_Money      17 
 
 #endif /* Object_Tag_h */
