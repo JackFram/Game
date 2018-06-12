@@ -14,6 +14,8 @@
 #include "Bullet.hpp"
 #include "Strength_Saving_Icon.hpp"
 #include "Enemy.hpp"
+#include "Boss.hpp"
+#include <time.h>
 
 USING_NS_CC;
 

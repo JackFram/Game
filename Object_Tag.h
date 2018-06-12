@@ -28,5 +28,8 @@
 #define ObjectTag_Money      17 
 #define ObjectTag_Time       18
 #define ObjectTag_WindLb     19
+#define ObjectTag_harm       20
+#define ObjectTag_BossSp     21
+#define ObjectTag_Boss       22
 
 #endif /* Object_Tag_h */

@@ -12,6 +12,7 @@
 #define ENEMY_ROUND  2
 #define PLAYER_HP (100)
 #define ENEMY_HP  (100)
+#define BOSS_HP   (2000)
 #define BULLET_FIRE_DIS (20)
 #define BULLET_SCALE (0.3)
 #define MAX_STRENGTH (1600)
@@ -30,9 +31,11 @@
 #define BULLET2_PATH  "Bullet/bullet4.png"
 #define WEAPON1_PATH  "Weapon/weapon.png"
 #define WEAPON2_PATH  "Weapon/weapon3.png"
+#define BOSS_PATH     "Player/boss.png"
 
 
 static int _direction = RIGHT;
-static int _wind = 100;
+static int _wind = 0;
+static int _killed = 0;
 
 #endif /* lib_h */

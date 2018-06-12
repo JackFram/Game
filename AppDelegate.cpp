@@ -39,7 +39,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::create("Just for play!");
+        glview = GLViewImpl::create("Niupi!");
         glview->setFrameSize(960, 640);
         director->setOpenGLView(glview);
     }

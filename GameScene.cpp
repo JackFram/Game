@@ -78,7 +78,7 @@ void GameScene::logic(float dt){
         //show round time 
         if((time_counter%50 == 0)&&(m_player->getChildByTag(ObjectTag_Time)))
             m_player->removeChildByTag(ObjectTag_Time);
-        if(this->getChildByTag(ObjectTag_Enemy)){
+        if(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)){
             if(time_counter%100 == 0)
             {
                 auto layer_time = Label::createWithSystemFont("Time Left: 10s", "Atlas", 30);
@@ -94,7 +94,7 @@ void GameScene::logic(float dt){
             m_player->setfini(true);
         }
     }
-    else if( m_player->getfini() == true && this->getChildByTag(ObjectTag_Enemy))
+    else if( m_player->getfini() == true && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
     {
         m_player->getPhysicsBody()->setVelocity(Vec2::ZERO);
         time_counter = 0;
@@ -102,6 +102,11 @@ void GameScene::logic(float dt){
         {
             this->getChildByTag(ObjectTag_Enemy)->getPhysicsBody()->setVelocity(Vec2::ZERO);
             ((Enemy*)this->getChildByTag(ObjectTag_Enemy))->Attack();
+        }
+        if(this->getChildByTag(ObjectTag_Boss)&&(!this->getChildByTag(ObjectTag_Bullet)))
+        {
+            this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->setVelocity(Vec2::ZERO);
+            ((Boss*)this->getChildByTag(ObjectTag_Boss))->Attack();
         }
         //m_player->setfini(false);
     }
@@ -112,6 +117,28 @@ void GameScene::logic(float dt){
     if(this->getChildByTag(ObjectTag_Bullet))
     {
         this->getChildByTag(ObjectTag_Bullet)->getPhysicsBody()->applyImpulse(Vec2(_wind, 0));
+    }
+    
+    if(!this->getChildByTag(ObjectTag_Enemy)&&_killed<1)
+    {
+        /* 创建敌人 */
+        auto enemy = Enemy::create();
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        enemy->setPosition(Point(visibleSize.width * 0.75f, 15));
+        this->addChild(enemy, 5, ObjectTag_Enemy);
+        _killed += 1;
+    }
+    else if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy))
+    {
+        auto enemy = Boss::create();
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        enemy->setPosition(Point(visibleSize.width * 0.75f, 15));
+        this->addChild(enemy, 5, ObjectTag_Boss);
+    }
+    
+    if(this->getChildByTag(ObjectTag_Boss))
+    {
+        this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->setVelocity(Vec2(0, this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->getVelocity().y));
     }
 }
 
@@ -132,11 +159,6 @@ bool GameScene::init()
     m_player = Player::create();
     m_player->setPosition(Point(visibleSize.width * 0.5f, 18));
     this->addChild(m_player, 5, ObjectTag_Player);
-    
-    /* 创建敌人 */
-    auto enemy = Enemy::create();
-    enemy->setPosition(Point(visibleSize.width * 0.75f, 15));
-    this->addChild(enemy, 5, ObjectTag_Enemy);
     
     /* 钻石数量 */
     auto layer_money = Label::createWithSystemFont("Money: 0", "Arial", 30);
@@ -202,12 +224,17 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         if(nodeA->getTag() == ObjectTag_Player)
         {
             Player * player = (Player *)nodeA;
-            player->getAttack(10);
+            player->getAttack(100);
         }
         else if(nodeA->getTag() == ObjectTag_Enemy)
         {
             Enemy * enemy = (Enemy *)nodeA;
-            enemy->getAttack(10);
+            enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
+        }
+        else if(nodeA->getTag() == ObjectTag_Boss)
+        {
+            Boss * boss = (Boss *)nodeA;
+            boss->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
         auto explode = ParticleSun::create();
         explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
@@ -218,11 +245,12 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             this->removeChildByTag(ObjectTag_Explode);
         this->addChild(explode, 30, ObjectTag_Explode);
         nodeB->removeFromParent();
-        if(!m_player->getfini()&&this->getChildByTag(ObjectTag_Enemy))
+        if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
             m_player->setfini(true);
         else if(m_player->getfini())
             m_player->setfini(false);
-        _wind = -_wind;
+        srand( (unsigned)time( NULL ) );
+        _wind = rand()%200-100;
     }
     else if(nodeA->getTag() == ObjectTag_Bullet)
     {
@@ -230,13 +258,18 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         if(nodeB->getTag() == ObjectTag_Player)
         {
             Player * player = (Player *)nodeB;
-            player->getAttack(10);
+            player->getAttack(100);
         }
         else if(nodeB->getTag() == ObjectTag_Enemy)
         {
             Enemy * enemy = (Enemy *)nodeB;
             if(this->getChildByTag(ObjectTag_Player))
                 enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
+        }
+        else if(nodeB->getTag() == ObjectTag_Boss)
+        {
+            Boss * boss = (Boss *)nodeB;
+            boss->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
         auto explode = ParticleSun::create();
         explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
@@ -247,11 +280,11 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             this->removeChildByTag(ObjectTag_Explode);
         this->addChild(explode, 30, ObjectTag_Explode);
         nodeA->removeFromParent();
-        if(!m_player->getfini()&&this->getChildByTag(ObjectTag_Enemy))
+        if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
             m_player->setfini(true);
         else if(m_player->getfini())
             m_player->setfini(false);
-        _wind = -_wind;
+        _wind = rand()%200-100;
     }
     return true;
     
