@@ -16,6 +16,7 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+    
 }
 
 Scene* GameScene::createScene()
@@ -49,11 +50,17 @@ Scene* GameScene::createScene()
 }
 
 void GameScene::logic(float dt){
+    if(m_player->getChildByTag(ObjectTag_WindLb))
+        ((Label *)(m_player->getChildByTag(ObjectTag_WindLb)))->setString(StringUtils::format("Wind: %ds",_wind));
+    auto wind = Label::createWithSystemFont("", "Atlas", 30);
+    wind->setPosition(0,2400);
+    wind->setScale(3);
+    m_player->addChild(wind,3,ObjectTag_WindLb);
     if(m_player->getParent()&&m_player->getParent()->getChildByTag(ObjectTag_Bullet))
     {
         ((Bullet *)(m_player->getParent()->getChildByTag(ObjectTag_Bullet)))->logic(dt);
     }
-    if( m_player->getfini() == false||this->getChildByTag(ObjectTag_Enemy)==NULL){
+    if( m_player->getfini() == false){
         m_player->logic(dt);
         if(this->getChildByTag(ObjectTag_Enemy))
             ((Enemy *)(this->getChildByTag(ObjectTag_Enemy)))->logic(dt);
@@ -67,8 +74,25 @@ void GameScene::logic(float dt){
                 this->setPosition(visibleSize.width/2-Player->getPosition().x,this->getPosition().y);
         }
         time_counter++;
-        if(time_counter%1000 == 0)
+        
+        //show round time 
+        if((time_counter%50 == 0)&&(m_player->getChildByTag(ObjectTag_Time)))
+            m_player->removeChildByTag(ObjectTag_Time);
+        if(this->getChildByTag(ObjectTag_Enemy)){
+            if(time_counter%100 == 0)
+            {
+                auto layer_time = Label::createWithSystemFont("Time Left: 10s", "Atlas", 30);
+                layer_time->setScale(2);
+                layer_time->setPosition(Vec2(0,1500));
+                layer_time->setColor(Color3B(249, 10, 10));
+                layer_time->setString(StringUtils::format("Time Left: %ds",10-time_counter/100));
+                m_player->addChild(layer_time, 2, ObjectTag_Time);
+            }
+        }
+        if(time_counter%1000 == 0 && this->getChildByTag(ObjectTag_Enemy))
+        {
             m_player->setfini(true);
+        }
     }
     else if( m_player->getfini() == true && this->getChildByTag(ObjectTag_Enemy))
     {
@@ -82,6 +106,13 @@ void GameScene::logic(float dt){
         //m_player->setfini(false);
     }
     ((Label *)(m_player->getChildByTag(ObjectTag_Money)))->setString(StringUtils::format("Money: %d",m_player->getmoney()));
+    
+    //wind added to bullet
+    
+    if(this->getChildByTag(ObjectTag_Bullet))
+    {
+        this->getChildByTag(ObjectTag_Bullet)->getPhysicsBody()->applyImpulse(Vec2(_wind, 0));
+    }
 }
 
 bool GameScene::init()
@@ -191,6 +222,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             m_player->setfini(true);
         else if(m_player->getfini())
             m_player->setfini(false);
+        _wind = -_wind;
     }
     else if(nodeA->getTag() == ObjectTag_Bullet)
     {
@@ -219,7 +251,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             m_player->setfini(true);
         else if(m_player->getfini())
             m_player->setfini(false);
-        
+        _wind = -_wind;
     }
     return true;
     

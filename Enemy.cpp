@@ -78,7 +78,7 @@ void Enemy::Attack()
     double strength;
     if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Player))
         strength = (this->getPosition().x-this->getParent()->getChildByTag(ObjectTag_Player)->getPosition().x)*2+rand()%200;
-    int angle = 45;
+    int angle = 90;
     double angel_x = cos((double(angle)/180)*M_PI);
     double angel_y = sin((double(angle)/180)*M_PI);
     bullet->setPosition(Vec2(this->getPosition().x-BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));

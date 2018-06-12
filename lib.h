@@ -33,5 +33,6 @@
 
 
 static int _direction = RIGHT;
+static int _wind = 100;
 
 #endif /* lib_h */

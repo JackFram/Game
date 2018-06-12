@@ -26,5 +26,7 @@
 #define ObjectTag_Weapon     15
 #define ObjectTag_WeaponSp   16
 #define ObjectTag_Money      17 
+#define ObjectTag_Time       18
+#define ObjectTag_WindLb     19
 
 #endif /* Object_Tag_h */

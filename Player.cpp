@@ -15,7 +15,7 @@ Player::Player()
     m_rHP = PLAYER_HP;
     m_original_angle = 0;
     m_finished = false;
-    m_weapon_id = 2;
+    m_weapon_id = 1;
     m_money = 200;
 }
 
