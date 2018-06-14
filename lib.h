@@ -6,8 +6,11 @@
 //
 //
 
+
 #ifndef lib_h
 #define lib_h
+
+//用来定义一些常量的宏
 #define PLAYER_ROUND  1
 #define ENEMY_ROUND  2
 #define PLAYER_HP (100)

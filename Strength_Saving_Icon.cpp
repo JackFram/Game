@@ -19,6 +19,7 @@ Strength_Saving_Icon::~Strength_Saving_Icon(){
 }
 
 bool Strength_Saving_Icon::init(){
+    //同创建血条很相似的创建力度条
     if(!Node::init())
         return false;
     Sprite *bgSprite = Sprite::create("Player/Strength_empty.png");

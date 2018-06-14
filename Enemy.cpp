@@ -54,11 +54,13 @@ bool Enemy::init()
 
 void Enemy::logic(float dt)
 {
+    //让敌人保持静止
     this->getPhysicsBody()->setVelocity(Vec2(0, this->getPhysicsBody()->getVelocity().y));
 }
 
 void Enemy::getAttack(int harm)
 {
+    //被攻击时的逻辑
     this->setiHP(this->getiHP()-harm);
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     int res = 100*this->getiHP()/this->getmHP();
@@ -73,6 +75,7 @@ void Enemy::getAttack(int harm)
 
 void Enemy::Attack()
 {
+    //AI进行攻击
     auto bullet = Bullet::create(BULLET0_PATH);
     srand( (unsigned)time( NULL ) );
     double strength;

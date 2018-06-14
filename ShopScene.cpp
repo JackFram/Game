@@ -27,9 +27,13 @@ bool ShopScene::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
+    
+    //背景显示
     Sprite * bg = Sprite::create(SHOP_PATH);
     bg->setPosition(Vec2(origin.x+visibleSize.width/2,origin.y+visibleSize.height/2));
     
+    
+    //武器图标显示
     Sprite * weapon1 = Sprite::create(WEAPON1_PATH);
     Sprite * weapon2 = Sprite::create(WEAPON2_PATH);
     Sprite * weapon3 = Sprite::create(WEAPON3_PATH);
@@ -44,7 +48,7 @@ bool ShopScene::init()
     auto gameButton = MenuItemImage::create("menu/return_0.png", "menu/return.png", CC_CALLBACK_1(ShopScene::OnClickReturn, this));
     gameButton->setScale(0.4);
     gameButton->setPosition(Director::getInstance()->convertToGL(Vec2(100,120)));
-    
+    //购买图标显示
     auto buy_button1 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy1, this));
     auto buy_button2 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy2, this));
     auto buy_button3 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy3, this));
@@ -61,6 +65,8 @@ bool ShopScene::init()
     this->addChild(weapon2,1);
     this->addChild(weapon3,1);
     
+    
+    //价格显示
     auto layer_1 = Label::createWithTTF("300$", "fonts/arial.ttf", 30);
     layer_1->setScale(1);
     layer_1->setPosition(Vec2(400, 495));
@@ -97,11 +103,14 @@ bool ShopScene::init()
     return true;
 }
 
+//场景切换
 void ShopScene::OnClickReturn(cocos2d::Ref *pSender)
 {
     Director::getInstance()->popScene();
 }
 
+
+//点击购买时出发
 void ShopScene::OnClickBuy1(Ref * pSender)
 {
     if(_money<300)

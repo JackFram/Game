@@ -28,6 +28,7 @@ bool MenuScene::init()
 {
     if(!Layer::init())
         return false;
+    //我们的第一个菜单页面，加入开始游戏按钮
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -51,6 +52,7 @@ bool MenuScene::init()
 
 void MenuScene::OnClickStart(cocos2d::Ref *pSender)
 {
+    //切换到游戏场景
     auto sc = GameScene::createScene();
     
     Director::getInstance()->pushScene(sc);

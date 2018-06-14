@@ -8,6 +8,7 @@
 
 #ifndef Data_h
 #define Data_h
+//全局变量
 extern int _money;
 extern bool _weapon1;
 extern bool _weapon2;

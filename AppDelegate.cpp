@@ -40,13 +40,14 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
         glview = GLViewImpl::create("Niupi!");
+        // 程序入口，创建窗口，大小为960x640
         glview->setFrameSize(960, 640);
         director->setOpenGLView(glview);
     }
     
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0 / 60);
-    
+    // 创建第一个场景并运行
     auto scene = MenuScene::createScene();
     director->runWithScene(scene);
     

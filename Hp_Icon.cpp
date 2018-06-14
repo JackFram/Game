@@ -18,6 +18,7 @@ Hp_Icon::~Hp_Icon(){
 }
 
 bool Hp_Icon::init(){
+    //创建血条
     if(!Node::init())
         return false;
     Sprite *bgSprite = Sprite::create(BLOOD_EMPTY_PATH);

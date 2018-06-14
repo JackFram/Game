@@ -50,6 +50,7 @@ Scene* GameScene::createScene()
 }
 
 void GameScene::logic(float dt){
+    //时刻更新风向，并显示
     if(m_player->getChildByTag(ObjectTag_WindLb))
         ((Label *)(m_player->getChildByTag(ObjectTag_WindLb)))->setString(StringUtils::format("Wind: %ds",_wind));
     
@@ -60,22 +61,27 @@ void GameScene::logic(float dt){
     m_player->addChild(wind,3,ObjectTag_WindLb);
     
     /* player round */
+    // getfini 用来获取玩家回合是否已结束
+    // 没有结束时，返回false，所以为玩家回合
     if( m_player->getfini() == false){
+        //执行玩家的逻辑回合
         m_player->logic(dt);
+        //若有敌人，执行敌人的逻辑回合
         if(this->getChildByTag(ObjectTag_Enemy))
             ((Enemy *)(this->getChildByTag(ObjectTag_Enemy)))->logic(dt);
         Size visibleSize = Director::getInstance()->getVisibleSize();
+        //跟随视角判断
         if(this->getChildByTag(ObjectTag_Player)&&this->getChildByTag(ObjectTag_BG))
         {
             auto Player = this->getChildByTag(ObjectTag_Player);
-            //跟踪视角
+            //跟踪视角，若没有到地图边界则跟踪，否则不跟踪
             auto BG = this->getChildByTag(ObjectTag_BG);
             if((Player->getPosition().x-visibleSize.width)>(-BG->getContentSize().width/2)&&(Player->getPosition().x+visibleSize.width)<BG->getContentSize().width/2)
                 this->setPosition(visibleSize.width/2-Player->getPosition().x,this->getPosition().y);
         }
         time_counter++;
         
-        //show round time 
+        //用来记录回合剩余时间
         if((time_counter%50 == 0)&&(m_player->getChildByTag(ObjectTag_Time)))
             m_player->removeChildByTag(ObjectTag_Time);
         if(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)){
@@ -89,11 +95,13 @@ void GameScene::logic(float dt){
                 m_player->addChild(layer_time, 2, ObjectTag_Time);
             }
         }
+        //如果时间倒了的话，结束玩家回合
         if(time_counter%1000 == 0 && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
         {
             m_player->setfini(true);
         }
     }
+    //玩家结束后进入敌人游戏回合
     else if( m_player->getfini() == true && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
     {
         m_player->getPhysicsBody()->setVelocity(Vec2::ZERO);
@@ -110,15 +118,18 @@ void GameScene::logic(float dt){
         }
         //m_player->setfini(false);
     }
+    
+    //实时更新金钱
     ((Label *)(m_player->getChildByTag(ObjectTag_Money)))->setString(StringUtils::format("Money: %d$",m_player->getmoney()));
     
-    //wind added to bullet
+    //风力则是每时对子弹加一个固定的冲力即可
     
     if(this->getChildByTag(ObjectTag_Bullet))
     {
         this->getChildByTag(ObjectTag_Bullet)->getPhysicsBody()->applyImpulse(Vec2(_wind, 0));
     }
     
+    //敌人的创建
     if(!this->getChildByTag(ObjectTag_Enemy)&&_killed<1)
     {
         /* 创建敌人 */
@@ -129,6 +140,7 @@ void GameScene::logic(float dt){
         _killed += 1;
     }
     
+    //boss的判断
     if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy))
     {
         auto enemy = Boss::create();
@@ -137,6 +149,7 @@ void GameScene::logic(float dt){
         this->addChild(enemy, 5, ObjectTag_Boss);
     }
     
+    //不让boss移动
     if(this->getChildByTag(ObjectTag_Boss))
     {
         this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->setVelocity(Vec2(0, this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->getVelocity().y));
@@ -180,6 +193,7 @@ bool GameScene::init()
     shopButton->setScale(1.7);
     shopButton->setPosition(Director::getInstance()->convertToGL(Vec2(0,780)));
     
+    //创建菜单
     Menu * mu = Menu::create(gameButton, gameReturnButton, shopButton, NULL);
     mu->setPosition(Vec2(-1750,2250));
     m_player->addChild(mu,1);
@@ -190,7 +204,7 @@ bool GameScene::init()
     ssBar->setScale(3);
     m_player->addChild(ssBar, 10, ObjectTag_SSI);
     
-    
+    // 背景设置
     Sprite * bg = Sprite::create(SCENE1_MAP_PATH);
     bg->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
     this->addChild(bg , 0, ObjectTag_BG);
@@ -220,25 +234,30 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
     {
         return true;
     }
-    
+    // 检测是否是子弹发生了碰撞
     if(nodeB->getTag() == ObjectTag_Bullet)
     {
         
+        //如果另一个物体是玩家
         if(nodeA->getTag() == ObjectTag_Player)
         {
             Player * player = (Player *)nodeA;
-            player->getAttack(100);
+            //玩家受到50点攻击
+            player->getAttack(50);
         }
         else if(nodeA->getTag() == ObjectTag_Enemy)
         {
+            //如果是敌人的话，根据玩家武器的攻击力来对其造成伤害
             Enemy * enemy = (Enemy *)nodeA;
             enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
         else if(nodeA->getTag() == ObjectTag_Boss)
         {
+            //如果是boss的话同样
             Boss * boss = (Boss *)nodeA;
             boss->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
+        //这里是子弹爆炸时的5毛钱特效，粒子系统
         auto explode = ParticleSun::create();
         explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
         explode->setPosition(nodeB->getPosition());
@@ -247,6 +266,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         if(this->getChildByTag(ObjectTag_Explode)!=NULL)
             this->removeChildByTag(ObjectTag_Explode);
         this->addChild(explode, 30, ObjectTag_Explode);
+        //销毁子弹并更换回合
         nodeB->removeFromParent();
         if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
             m_player->setfini(true);
@@ -255,6 +275,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         srand( (unsigned)time( NULL ) );
         _wind = rand()%200-100;
     }
+    //逻辑同上
     else if(nodeA->getTag() == ObjectTag_Bullet)
     {
         
@@ -297,7 +318,7 @@ void GameScene::onEnter()
 {
     Layer::onEnter();
     m_player->setmoney(_money);
-    
+    //在进入场景时，执行更新场景的函数
     this->schedule(schedule_selector(GameScene::logic));
     
     this->scheduleUpdate();
@@ -310,22 +331,26 @@ void GameScene::onEnter()
 void GameScene::onExit()
 {
     Layer::onExit();
+    //退出的时候取消事件监听
     _eventDispatcher->removeEventListenersForTarget(this);
     _money = m_player->getmoney();
 }
 
 void GameScene::OnClickReturn(cocos2d::Ref *pSender)
 {
+    //场景切换
     Director::getInstance()->popScene();
 }
 
 void GameScene::OnClickReStart(cocos2d::Ref *pSender)
 {
+    //场景切换
     Director::getInstance()->replaceScene(GameScene::createScene());
 }
 
 void GameScene::OnClickShop(cocos2d::Ref *pSender)
 {
+    //场景切换
     auto sc = ShopScene::createScene();
     Director::getInstance()->pushScene(sc);
 }

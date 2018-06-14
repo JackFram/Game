@@ -75,6 +75,7 @@ void Boss::getAttack(int harm)
 
 void Boss::Attack()
 {
+    // boss 的攻击逻辑，三颗子弹
     auto bullet = Bullet::create(THUNDER_PATH);
     srand( (unsigned)time( NULL ) );
     double strength;

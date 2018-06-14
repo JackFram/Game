@@ -8,7 +8,7 @@
 
 #ifndef Object_Tag_h
 #define Object_Tag_h
-
+//用来做tag的宏
 #define ObjectTag_Player     1
 #define ObjectTag_Border     2
 #define ObjectTag_Bullet     3

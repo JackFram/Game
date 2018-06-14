@@ -11,12 +11,12 @@
 
 Player::Player()
 {
-    m_iHP = PLAYER_HP;
-    m_rHP = PLAYER_HP;
-    m_original_angle = 0;
-    m_finished = false;
-    m_weapon_id = 1;
-    m_money = 800;
+    m_iHP = PLAYER_HP;//总hp
+    m_rHP = PLAYER_HP;//剩余hp
+    m_original_angle = 0;//发射子弹角度
+    m_finished = false;//标志是否结束回合
+    m_weapon_id = 1; //使用的武器id
+    m_money = 800;//剩余钱数
 }
 
 Player::~Player()
@@ -44,6 +44,7 @@ bool Player::init()
         }
         // lock up our key
         
+        // 在不是玩家回合的时候禁用按键
         if(keyCode == EventKeyboard::KeyCode::KEY_SPACE&&!this->getfini())
         {
             this->removeChildByTag(ObjectTag_PlayerSp);
@@ -59,6 +60,8 @@ bool Player::init()
     eventListener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event){
         // remove the key.  std::map.erase() doesn't care if the key doesnt exist
         // unlock our key
+        
+        //非玩家回合禁用按键
         if(keyCode == EventKeyboard::KeyCode::KEY_SPACE&&!this->getfini())
         {
             this->shoot();
@@ -135,6 +138,7 @@ void Player::moveToLeft()
 }
 void Player::shoot()
 {
+    //计算角度后进行发射
     auto bullet = Bullet::create(((Weapon *)(this->getChildByTag(ObjectTag_Weapon)))->getbullet_path());
     double strength = keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE);
     strength = (strength>MAX_STRENGTH) ? MAX_STRENGTH : strength;
@@ -152,6 +156,7 @@ void Player::shoot()
 
 void Player::getAttack(int harm)
 {
+    //受到攻击
     if(this->getChildByTag(ObjectTag_Weapon))
         harm = harm*((Weapon *)this->getChildByTag(ObjectTag_Weapon))->getdef();
     this->setiHP(this->getiHP()-harm);
@@ -220,7 +225,7 @@ void Player::logic(float dt)
             pt->setPercentage(100*keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE)/MAX_STRENGTH);
         }
     }
-    
+    //切换武器的函数
     else if(isKeyPressed(EventKeyboard::KeyCode::KEY_1)){
         if(_weapon1){
             this->removeChildByTag(ObjectTag_Weapon);
@@ -279,7 +284,7 @@ void Player::logic(float dt)
         ProgressTimer * pt = (ProgressTimer*)this->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
         pt->setVisible(0);
     }
-    
+    //定时删除屏幕上的标识
     if(this->getChildByTag(ObjectTag_Tag))
     {
         this->setfm(this->getfm()+1);

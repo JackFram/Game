@@ -16,6 +16,7 @@ Weapon::Weapon()
 Weapon::Weapon(int weapon_id)
 {
     switch (weapon_id) {
+            //我们的三种武器
         case 1:
             this->setatt(20);
             this->setdef(0.7);
