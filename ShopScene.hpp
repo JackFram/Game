@@ -25,6 +25,7 @@ public:
     void OnClickBuy1(Ref * pSender);
     void OnClickBuy2(Ref * pSender);
     void OnClickBuy3(Ref * pSender);
+    void OnClickBuy4(Ref * pSender);
     
     CREATE_FUNC(ShopScene);
 private:

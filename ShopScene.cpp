@@ -37,9 +37,12 @@ bool ShopScene::init()
     Sprite * weapon1 = Sprite::create(WEAPON1_PATH);
     Sprite * weapon2 = Sprite::create(WEAPON2_PATH);
     Sprite * weapon3 = Sprite::create(WEAPON3_PATH);
+    Sprite * recover = Sprite::create("Weapon/recover.png");
     weapon1->setPosition(Vec2(295, 485));
     weapon2->setPosition(Vec2(295, 340));
     weapon3->setPosition(Vec2(645, 488));
+    recover->setPosition(Vec2(645, 340));
+    recover->setScale(1.2);
     weapon2->setRotation(-13);
     weapon3->setScale(0.8);
     weapon3->setRotation(-10);
@@ -52,18 +55,21 @@ bool ShopScene::init()
     auto buy_button1 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy1, this));
     auto buy_button2 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy2, this));
     auto buy_button3 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy3, this));
+    auto buy_button4 = MenuItemImage::create("menu/buy.png", "menu/buy_0.png", CC_CALLBACK_1(ShopScene::OnClickBuy4, this));
     
     buy_button1->setPosition(Vec2(400, 445));
     buy_button2->setPosition(Vec2(400, 300));
     buy_button3->setPosition(Vec2(750, 446));
+    buy_button4->setPosition(Vec2(750, 300));
     
-    Menu * mu = Menu::create(gameButton, buy_button1, buy_button2, buy_button3, NULL);
+    Menu * mu = Menu::create(gameButton, buy_button1, buy_button2, buy_button3, buy_button4, NULL);
     mu->setPosition(Vec2::ZERO);
     this->addChild(mu,1);
     
     this->addChild(weapon1,1);
     this->addChild(weapon2,1);
     this->addChild(weapon3,1);
+    this->addChild(recover,1);
     
     
     //价格显示
@@ -82,8 +88,14 @@ bool ShopScene::init()
     auto layer_3 = Label::createWithTTF("900$", "fonts/arial.ttf", 30);
     layer_3->setScale(1);
     layer_3->setPosition(Vec2(750, 496));
-    layer_1->setTag(ObjectTag_Tag);
+    layer_3->setTag(ObjectTag_Tag);
     this->addChild(layer_3,2);
+    
+    auto layer_4 = Label::createWithTTF("100$", "fonts/arial.ttf", 30);
+    layer_4->setScale(1);
+    layer_4->setPosition(Vec2(750, 350));
+    layer_4->setTag(ObjectTag_Tag);
+    this->addChild(layer_4,2);
     
     
     auto layer_money = Label::createWithSystemFont("", "Arial", 30);
@@ -183,6 +195,23 @@ void ShopScene::OnClickBuy3(Ref * pSender)
     {
         _weapon3 = 1;
         _money -= 900;
+    }
+}
+
+void ShopScene::OnClickBuy4(Ref * pSender)
+{
+    if(_money<100)
+    {
+        auto layer_money = Label::createWithSystemFont("You couldn't afford it!", "Arial", 30);
+        layer_money->setScale(2);
+        layer_money->setPosition(Vec2(480,320));
+        layer_money->setTag(ObjectTag_Buy);
+        this->addChild(layer_money,2);
+    }
+    else
+    {
+        _recover += 30;
+        _money -= 100;
     }
 }
 

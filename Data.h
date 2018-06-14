@@ -12,6 +12,7 @@
 extern int _money;
 extern bool _weapon1;
 extern bool _weapon2;
-extern bool _weapon3 ;
+extern bool _weapon3;
+extern int _recover;
 
 #endif /* Data_h */

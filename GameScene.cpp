@@ -317,7 +317,16 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
 void GameScene::onEnter()
 {
     Layer::onEnter();
+    
+    // update money
     m_player->setmoney(_money);
+
+    //update hp
+    m_player->setiHP(((m_player->getiHP()+_recover)>100 ? 100 : m_player->getiHP()+_recover));
+    ProgressTimer* pT = (ProgressTimer*)m_player->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
+    int res = 100*m_player->getiHP()/m_player->getrHP();
+    pT->setPercentage(res);
+    _recover = 0;
     //在进入场景时，执行更新场景的函数
     this->schedule(schedule_selector(GameScene::logic));
     

@@ -80,7 +80,7 @@ void Enemy::Attack()
     srand( (unsigned)time( NULL ) );
     double strength;
     if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Player))
-        strength = (this->getPosition().x-this->getParent()->getChildByTag(ObjectTag_Player)->getPosition().x)*1.3+rand()%200+_wind*2;
+        strength = (this->getPosition().x-this->getParent()->getChildByTag(ObjectTag_Player)->getPosition().x)*2+rand()%200+_wind*2;
     int angle = 45;
     double angel_x = cos((double(angle)/180)*M_PI);
     double angel_y = sin((double(angle)/180)*M_PI);
