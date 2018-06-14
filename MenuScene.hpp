@@ -13,6 +13,7 @@
 #include "lib.h"
 #include "Object_Tag.h"
 #include "GameScene.hpp"
+#include "Data.h"
 
 USING_NS_CC;
 class MenuScene : public Layer
@@ -24,7 +25,6 @@ public:
     void OnClickStart(Ref * pSender);
     
     CREATE_FUNC(MenuScene);
-    /* collision detection */
 };
 
 #endif /* menu_hpp */

@@ -24,10 +24,17 @@ Weapon::Weapon(int weapon_id)
             break;
             
         case 2:
-            this->setatt(400);
-            this->setdef(0.1);
+            this->setatt(100);
+            this->setdef(0.4);
             this->setweapon_path(WEAPON2_PATH);
             this->setbullet_path(BULLET2_PATH);
+            break;
+            
+        case 3:
+            this->setatt(200);
+            this->setdef(0.2);
+            this->setweapon_path(WEAPON3_PATH);
+            this->setbullet_path(BULLET3_PATH);
             break;
             
         default:

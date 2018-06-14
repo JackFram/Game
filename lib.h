@@ -26,16 +26,21 @@
 #define PLAYER_STAND_PATH "Player/player_stand.png"
 #define SCENE1_MAP_PATH "background/bg1.jpeg"
 #define MENU_BG_PATH "background/bg3.jpg"
-#define BULLET0_PATH  "Bullet/bullet2.png"
-#define BULLET1_PATH  "Bullet/bullet3.png"
-#define BULLET2_PATH  "Bullet/bullet4.png"
-#define WEAPON1_PATH  "Weapon/weapon.png"
-#define WEAPON2_PATH  "Weapon/weapon3.png"
+#define BULLET0_PATH  "Bullet/bullet1.png"
+#define BULLET1_PATH  "Bullet/bullet2.png"
+#define BULLET2_PATH  "Bullet/bullet3.png"
+#define BULLET3_PATH  "Bullet/bullet4.png"
+#define WEAPON1_PATH  "Weapon/weapon4.png"
+#define WEAPON2_PATH  "Weapon/weapon.png"
+#define WEAPON3_PATH  "Weapon/weapon3.png"
 #define BOSS_PATH     "Player/boss.png"
+#define THUNDER_PATH  "Bullet/thunder.png"
+#define SHOP_PATH     "background/shopScene.png"
 
 
 static int _direction = RIGHT;
 static int _wind = 0;
 static int _killed = 0;
+
 
 #endif /* lib_h */

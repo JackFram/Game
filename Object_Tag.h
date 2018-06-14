@@ -31,5 +31,7 @@
 #define ObjectTag_harm       20
 #define ObjectTag_BossSp     21
 #define ObjectTag_Boss       22
+#define ObjectTag_Buy        23
+#define ObjectTag_Tag        24
 
 #endif /* Object_Tag_h */

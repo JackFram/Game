@@ -68,14 +68,14 @@ void Boss::getAttack(int harm)
     if(this->getiHP()<=0)
     {
         Player * player = ((Player *)(this->getParent()->getChildByTag(ObjectTag_Player)));
-        player->setmoney(player->getmoney()+100);
+        player->setmoney(player->getmoney()+500);
         this->removeFromParent();
     }
 }
 
 void Boss::Attack()
 {
-    auto bullet = Bullet::create(BULLET0_PATH);
+    auto bullet = Bullet::create(THUNDER_PATH);
     srand( (unsigned)time( NULL ) );
     double strength;
     if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Player))
@@ -86,4 +86,26 @@ void Boss::Attack()
     bullet->setPosition(Vec2(this->getPosition().x-170,this->getPosition().y-50));
     bullet->getPhysicsBody()->applyImpulse(Vec2(-(BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
     this->getParent()->addChild(bullet);
+    
+    auto bullet1 = Bullet::create(THUNDER_PATH);
+    srand( (unsigned)time( NULL ) );
+    if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Player))
+        strength = (this->getPosition().x-this->getParent()->getChildByTag(ObjectTag_Player)->getPosition().x)*0.7+rand()%200+_wind*15;
+    angle = 45;
+    angel_x = cos((double(angle)/180)*M_PI);
+    angel_y = sin((double(angle)/180)*M_PI);
+    bullet1->setPosition(Vec2(this->getPosition().x-170,this->getPosition().y+50));
+    bullet1->getPhysicsBody()->applyImpulse(Vec2(-(BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
+    this->getParent()->addChild(bullet1);
+    
+    auto bullet2 = Bullet::create(THUNDER_PATH);
+    srand( (unsigned)time( NULL ) );
+    if(this->getParent()&&this->getParent()->getChildByTag(ObjectTag_Player))
+        strength = (this->getPosition().x-this->getParent()->getChildByTag(ObjectTag_Player)->getPosition().x)*0.3+rand()%200+_wind*15;
+    angle = 45;
+    angel_x = cos((double(angle)/180)*M_PI);
+    angel_y = sin((double(angle)/180)*M_PI);
+    bullet2->setPosition(Vec2(this->getPosition().x-170,this->getPosition().y+150));
+    bullet2->getPhysicsBody()->applyImpulse(Vec2(-(BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
+    this->getParent()->addChild(bullet2);
 }

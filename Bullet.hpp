@@ -41,7 +41,7 @@ public:
     
     
     virtual bool init();
-    void logic(float dt);
+    void update(float dt);
 private:
     float born_x;
     float born_y;

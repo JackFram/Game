@@ -8,6 +8,12 @@
 
 #include "MenuScene.hpp"
 
+int _money = 800;
+bool _weapon1 = 1;
+bool _weapon2 = 0;
+bool _weapon3 = 0;
+
+
 Scene * MenuScene::createScene()
 {
     auto scene = Scene::create();

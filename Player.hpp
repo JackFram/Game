@@ -15,6 +15,7 @@
 #include "Strength_Saving_Icon.hpp"
 #include "lib.h"
 #include "Weapon.hpp"
+#include "Data.h"
 #include <math.h>
 
 
@@ -45,5 +46,6 @@ private:
     CC_SYNTHESIZE(bool, m_finished, fini);
     CC_SYNTHESIZE(int, m_weapon_id, weapon_id);
     CC_SYNTHESIZE(int, m_money, money);
+    CC_SYNTHESIZE(int, flag_time, fm);
 };
 #endif

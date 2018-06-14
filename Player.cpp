@@ -15,7 +15,7 @@ Player::Player()
     m_rHP = PLAYER_HP;
     m_original_angle = 0;
     m_finished = false;
-    m_weapon_id = 2;
+    m_weapon_id = 1;
     m_money = 800;
 }
 
@@ -96,6 +96,8 @@ bool Player::init()
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     pT->setPercentage(100);
     this->setTag(ObjectTag_Player);
+    
+    this->setfm(0);
 
     return true;
 }
@@ -218,11 +220,74 @@ void Player::logic(float dt)
             pt->setPercentage(100*keyPressedDuration(EventKeyboard::KeyCode::KEY_SPACE)/MAX_STRENGTH);
         }
     }
+    
+    else if(isKeyPressed(EventKeyboard::KeyCode::KEY_1)){
+        if(_weapon1){
+            this->removeChildByTag(ObjectTag_Weapon);
+            auto weapon = Weapon::create(1);
+            this->setweapon_id(1);
+            this->addChild(weapon,19,ObjectTag_Weapon);
+        }
+        else
+        {
+            auto layer_money = Label::createWithSystemFont("You don't have that weapon!", "Arial", 30);
+            layer_money->setScale(2);
+            layer_money->setPosition(Vec2(480,320));
+            layer_money->setTag(ObjectTag_Tag);
+            this->addChild(layer_money,21);
+        }
+    }
+    
+    else if(isKeyPressed(EventKeyboard::KeyCode::KEY_2)){
+        if(_weapon2){
+            this->removeChildByTag(ObjectTag_Weapon);
+            auto weapon = Weapon::create(2);
+            this->setweapon_id(2);
+            this->addChild(weapon,19,ObjectTag_Weapon);
+        }
+        else
+        {
+            auto layer_money = Label::createWithSystemFont("You don't have that weapon!", "Arial", 30);
+            layer_money->setScale(2);
+            layer_money->setPosition(Vec2(480,320));
+            layer_money->setTag(ObjectTag_Tag);
+            this->addChild(layer_money,21);
+        }
+    }
+    
+    else if(isKeyPressed(EventKeyboard::KeyCode::KEY_3)){
+        if(_weapon3){
+            this->removeChildByTag(ObjectTag_Weapon);
+            auto weapon = Weapon::create(3);
+            this->setweapon_id(3);
+            this->addChild(weapon,19,ObjectTag_Weapon);
+        }
+        else
+        {
+            auto layer_money = Label::createWithSystemFont("You don't have that weapon!", "Arial", 30);
+            layer_money->setScale(2);
+            layer_money->setPosition(Vec2(480,320));
+            layer_money->setTag(ObjectTag_Tag);
+            this->addChild(layer_money,21);
+        }
+    }
+    
     else{
         //set our player to be stable
         auto velocity = this->getPhysicsBody()->getVelocity();
         this->getPhysicsBody()->setVelocity(Vec2(0, velocity.y));
         ProgressTimer * pt = (ProgressTimer*)this->getChildByTag(ObjectTag_SSI)->getChildByTag(ObjectTag_PT);
         pt->setVisible(0);
+    }
+    
+    if(this->getChildByTag(ObjectTag_Tag))
+    {
+        this->setfm(this->getfm()+1);
+    }
+    if(this->getfm()>=20)
+    {
+        this->setfm(0);
+        while(this->getChildByTag(ObjectTag_Tag))
+            this->removeChildByTag(ObjectTag_Tag);
     }
 }

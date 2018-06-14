@@ -49,7 +49,7 @@ bool Bullet::init()
     return true;
 }
 
-void Bullet::logic(float dt)
+void Bullet::update(float dt)
 {
         Vec2 velocity = this->getPhysicsBody()->getVelocity();
         this->getChildByTag(ObjectTag_BulletSp)->setRotation((atanf(-velocity.y/velocity.x)*180)/M_PI);

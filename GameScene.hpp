@@ -15,6 +15,8 @@
 #include "Strength_Saving_Icon.hpp"
 #include "Enemy.hpp"
 #include "Boss.hpp"
+#include "MenuScene.hpp"
+#include "ShopScene.hpp"
 #include <time.h>
 
 USING_NS_CC;
@@ -28,9 +30,13 @@ public:
     CREATE_FUNC(GameScene);
     virtual bool init() override;
     virtual void onExit() override;
+    virtual void onEnter() override;
     void logic(float dt);
     void OnClickReturn(Ref * pSender);
     void OnClickReStart(Ref * pSender);
+    void OnClickShop(Ref * pSender);
+    int GetMoney();
+    
     /* collision detection */
     bool onContactBegin(PhysicsContact& contact);
 private:

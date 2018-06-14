@@ -52,14 +52,14 @@ Scene* GameScene::createScene()
 void GameScene::logic(float dt){
     if(m_player->getChildByTag(ObjectTag_WindLb))
         ((Label *)(m_player->getChildByTag(ObjectTag_WindLb)))->setString(StringUtils::format("Wind: %ds",_wind));
+    
+    /* wind tag */
     auto wind = Label::createWithSystemFont("", "Atlas", 30);
     wind->setPosition(0,2400);
     wind->setScale(3);
     m_player->addChild(wind,3,ObjectTag_WindLb);
-    if(m_player->getParent()&&m_player->getParent()->getChildByTag(ObjectTag_Bullet))
-    {
-        ((Bullet *)(m_player->getParent()->getChildByTag(ObjectTag_Bullet)))->logic(dt);
-    }
+    
+    /* player round */
     if( m_player->getfini() == false){
         m_player->logic(dt);
         if(this->getChildByTag(ObjectTag_Enemy))
@@ -89,7 +89,7 @@ void GameScene::logic(float dt){
                 m_player->addChild(layer_time, 2, ObjectTag_Time);
             }
         }
-        if(time_counter%1000 == 0 && this->getChildByTag(ObjectTag_Enemy))
+        if(time_counter%1000 == 0 && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
         {
             m_player->setfini(true);
         }
@@ -110,7 +110,7 @@ void GameScene::logic(float dt){
         }
         //m_player->setfini(false);
     }
-    ((Label *)(m_player->getChildByTag(ObjectTag_Money)))->setString(StringUtils::format("Money: %d",m_player->getmoney()));
+    ((Label *)(m_player->getChildByTag(ObjectTag_Money)))->setString(StringUtils::format("Money: %d$",m_player->getmoney()));
     
     //wind added to bullet
     
@@ -128,7 +128,8 @@ void GameScene::logic(float dt){
         this->addChild(enemy, 5, ObjectTag_Enemy);
         _killed += 1;
     }
-    else if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy))
+    
+    if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy))
     {
         auto enemy = Boss::create();
         Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -149,16 +150,12 @@ bool GameScene::init()
         return false;
     }
     
-    /* 碰撞监听 */
-    auto contactListener = EventListenerPhysicsContact::create();
-    contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
     
     /* 创建主角 */
     Size visibleSize = Director::getInstance()->getVisibleSize();
     m_player = Player::create();
     m_player->setPosition(Point(visibleSize.width * 0.5f, 18));
-    this->addChild(m_player, 5, ObjectTag_Player);
+    this->addChild(m_player, 6, ObjectTag_Player);
     
     /* 钻石数量 */
     auto layer_money = Label::createWithSystemFont("Money: 0", "Arial", 30);
@@ -178,13 +175,21 @@ bool GameScene::init()
     gameReturnButton->setScale(0.8);
     gameReturnButton->setPosition(Director::getInstance()->convertToGL(Vec2(0,580)));
     
-    Menu * mu = Menu::create(gameButton, gameReturnButton, NULL);
+    /* shop button */
+    auto shopButton = MenuItemImage::create("menu/shop.png", "menu/shop_0.png", CC_CALLBACK_1(GameScene::OnClickShop, this));
+    shopButton->setScale(1.7);
+    shopButton->setPosition(Director::getInstance()->convertToGL(Vec2(0,780)));
+    
+    Menu * mu = Menu::create(gameButton, gameReturnButton, shopButton, NULL);
     mu->setPosition(Vec2(-1750,2250));
     m_player->addChild(mu,1);
     
     //add strength saving icon
     auto ssBar = Strength_Saving_Icon::create();
+    ssBar->setPosition(Vec2(0, 2280));
+    ssBar->setScale(3);
     m_player->addChild(ssBar, 10, ObjectTag_SSI);
+    
     
     Sprite * bg = Sprite::create(SCENE1_MAP_PATH);
     bg->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
@@ -202,8 +207,6 @@ bool GameScene::init()
     
     //particle system
     this->setTag(ObjectTag_GameScene);
-    
-    this->schedule(schedule_selector(GameScene::logic));
 
     return true;
 }
@@ -290,19 +293,44 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
     
 }
 
+void GameScene::onEnter()
+{
+    Layer::onEnter();
+    m_player->setmoney(_money);
+    
+    this->schedule(schedule_selector(GameScene::logic));
+    
+    this->scheduleUpdate();
+    /* 碰撞监听 */
+    auto contactListener = EventListenerPhysicsContact::create();
+    contactListener->onContactBegin = CC_CALLBACK_1(GameScene::onContactBegin, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
+}
+
 void GameScene::onExit()
 {
     Layer::onExit();
     _eventDispatcher->removeEventListenersForTarget(this);
+    _money = m_player->getmoney();
 }
 
 void GameScene::OnClickReturn(cocos2d::Ref *pSender)
 {
-    
     Director::getInstance()->popScene();
 }
 
 void GameScene::OnClickReStart(cocos2d::Ref *pSender)
 {
     Director::getInstance()->replaceScene(GameScene::createScene());
+}
+
+void GameScene::OnClickShop(cocos2d::Ref *pSender)
+{
+    auto sc = ShopScene::createScene();
+    Director::getInstance()->pushScene(sc);
+}
+
+int GameScene::GetMoney()
+{
+    return m_player->getmoney();
 }
