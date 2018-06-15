@@ -13,6 +13,7 @@ bool _weapon1 = 1;
 bool _weapon2 = 0;
 bool _weapon3 = 0;
 int _recover = 0;
+int _exp = 0;
 
 
 Scene * MenuScene::createScene()

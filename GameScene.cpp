@@ -84,7 +84,7 @@ void GameScene::logic(float dt){
         //用来记录回合剩余时间
         if((time_counter%50 == 0)&&(m_player->getChildByTag(ObjectTag_Time)))
             m_player->removeChildByTag(ObjectTag_Time);
-        if(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)){
+        if(this->getChildByTag(ObjectTag_Enemy_1)||this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)){
             if(time_counter%100 == 0)
             {
                 auto layer_time = Label::createWithSystemFont("Time Left: 10s", "Atlas", 30);
@@ -96,13 +96,13 @@ void GameScene::logic(float dt){
             }
         }
         //如果时间倒了的话，结束玩家回合
-        if(time_counter%1000 == 0 && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
+        if(time_counter%1000 == 0 && (this->getChildByTag(ObjectTag_Enemy_1)||this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
         {
             m_player->setfini(true);
         }
     }
     //玩家结束后进入敌人游戏回合
-    else if( m_player->getfini() == true && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
+    else if( m_player->getfini() == true && (this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)||this->getChildByTag(ObjectTag_Enemy_1)))
     {
         m_player->getPhysicsBody()->setVelocity(Vec2::ZERO);
         time_counter = 0;
@@ -115,6 +115,11 @@ void GameScene::logic(float dt){
         {
             this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->setVelocity(Vec2::ZERO);
             ((Boss*)this->getChildByTag(ObjectTag_Boss))->Attack();
+        }
+        if(this->getChildByTag(ObjectTag_Enemy_1)&&(!this->getChildByTag(ObjectTag_Bullet)))
+        {
+            this->getChildByTag(ObjectTag_Enemy_1)->getPhysicsBody()->setVelocity(Vec2::ZERO);
+            ((Enemy_1*)this->getChildByTag(ObjectTag_Enemy_1))->Attack();
         }
         //m_player->setfini(false);
     }
@@ -130,7 +135,7 @@ void GameScene::logic(float dt){
     }
     
     //敌人的创建
-    if(!this->getChildByTag(ObjectTag_Enemy)&&_killed<1)
+    if(!this->getChildByTag(ObjectTag_Enemy_1)&&_killed<1)
     {
         /* 创建敌人 */
         auto enemy = Enemy::create();
@@ -140,13 +145,29 @@ void GameScene::logic(float dt){
         _killed += 1;
     }
     
+    if(!this->getChildByTag(ObjectTag_Enemy)&&_killed==1)
+    {
+        auto enemy = Enemy_1::create();
+        Size visibleSize = Director::getInstance()->getVisibleSize();
+        enemy->setPosition(Point(visibleSize.width * 0.75f, 15));
+        this->addChild(enemy, 5, ObjectTag_Enemy_1);
+        _killed += 1;
+    }
+    
     //boss的判断
-    if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy))
+    
+    if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy)&&!this->getChildByTag(ObjectTag_Enemy_1)&&_killed == 2)
     {
         auto enemy = Boss::create();
         Size visibleSize = Director::getInstance()->getVisibleSize();
         enemy->setPosition(Point(visibleSize.width * 0.75f, 15));
         this->addChild(enemy, 5, ObjectTag_Boss);
+        _killed += 1;
+    }
+    if(!this->getChildByTag(ObjectTag_Boss)&&!this->getChildByTag(ObjectTag_Enemy)&&!this->getChildByTag(ObjectTag_Enemy_1)&&_killed == 3)
+    {
+        printf("You have won the game!!!!!Congratulate!");
+        exit(0);
     }
     
     //不让boss移动
@@ -154,6 +175,17 @@ void GameScene::logic(float dt){
     {
         this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->setVelocity(Vec2(0, this->getChildByTag(ObjectTag_Boss)->getPhysicsBody()->getVelocity().y));
     }
+    
+    if(this->getChildByTag(ObjectTag_Enemy_1))
+    {
+        this->getChildByTag(ObjectTag_Enemy_1)->getPhysicsBody()->setVelocity(Vec2(0, this->getChildByTag(ObjectTag_Enemy_1)->getPhysicsBody()->getVelocity().y));
+    }
+    
+    ProgressTimer* pT = (ProgressTimer*)m_player->getChildByTag(ObjectTag_Exp)->getChildByTag(ObjectTag_PT);
+    pT->setPercentage((_exp%200)/2);
+    
+    ((Label *)(m_player->getChildByTag(ObjectTag_ExpTag)))->setString(StringUtils::format("Level. %d",_exp/200+1));
+    m_player->setexp(_exp);
 }
 
 bool GameScene::init()
@@ -251,6 +283,12 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             Enemy * enemy = (Enemy *)nodeA;
             enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
+        else if(nodeB->getTag() == ObjectTag_Enemy_1)
+        {
+            Enemy_1 * enemy = (Enemy_1 *)nodeB;
+            if(this->getChildByTag(ObjectTag_Player))
+                enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
+        }
         else if(nodeA->getTag() == ObjectTag_Boss)
         {
             //如果是boss的话同样
@@ -268,7 +306,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         this->addChild(explode, 30, ObjectTag_Explode);
         //销毁子弹并更换回合
         nodeB->removeFromParent();
-        if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
+        if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy_1)||this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
             m_player->setfini(true);
         else if(m_player->getfini())
             m_player->setfini(false);
@@ -282,7 +320,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
         if(nodeB->getTag() == ObjectTag_Player)
         {
             Player * player = (Player *)nodeB;
-            player->getAttack(100);
+            player->getAttack(50);
         }
         else if(nodeB->getTag() == ObjectTag_Enemy)
         {
@@ -295,6 +333,12 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             Boss * boss = (Boss *)nodeB;
             boss->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
         }
+        else if(nodeB->getTag() == ObjectTag_Enemy_1)
+        {
+            Enemy_1 * enemy = (Enemy_1 *)nodeB;
+            if(this->getChildByTag(ObjectTag_Player))
+                enemy->getAttack(((Weapon *)(this->getChildByTag(ObjectTag_Player)->getChildByTag(ObjectTag_Weapon)))->getatt());
+        }
         auto explode = ParticleSun::create();
         explode->setTexture(Director::getInstance()->getTextureCache()->addImage("explode.png"));
         explode->setPosition(nodeA->getPosition());
@@ -304,7 +348,7 @@ bool GameScene::onContactBegin(PhysicsContact& contact)
             this->removeChildByTag(ObjectTag_Explode);
         this->addChild(explode, 30, ObjectTag_Explode);
         nodeA->removeFromParent();
-        if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
+        if(!m_player->getfini()&&(this->getChildByTag(ObjectTag_Enemy_1)||this->getChildByTag(ObjectTag_Enemy)||this->getChildByTag(ObjectTag_Boss)))
             m_player->setfini(true);
         else if(m_player->getfini())
             m_player->setfini(false);

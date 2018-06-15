@@ -79,7 +79,7 @@ bool ShopScene::init()
     layer_1->setTag(ObjectTag_Tag);
     this->addChild(layer_1,2);
     
-    auto layer_2 = Label::createWithTTF("700$", "fonts/arial.ttf", 30);
+    auto layer_2 = Label::createWithTTF("500$", "fonts/arial.ttf", 30);
     layer_2->setScale(1);
     layer_2->setPosition(Vec2(400, 350));
     layer_2->setTag(ObjectTag_Tag);
@@ -150,7 +150,7 @@ void ShopScene::OnClickBuy1(Ref * pSender)
 
 void ShopScene::OnClickBuy2(Ref * pSender)
 {
-    if(_money<700)
+    if(_money<500)
     {
         auto layer_money = Label::createWithSystemFont("You couldn't afford it", "Arial", 30);
         layer_money->setScale(2);
@@ -169,7 +169,7 @@ void ShopScene::OnClickBuy2(Ref * pSender)
     else
     {
         _weapon2 = 1;
-        _money -= 700;
+        _money -= 500;
     }
 }
 

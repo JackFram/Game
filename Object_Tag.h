@@ -33,5 +33,8 @@
 #define ObjectTag_Boss       22
 #define ObjectTag_Buy        23
 #define ObjectTag_Tag        24
+#define ObjectTag_Exp        25
+#define ObjectTag_ExpTag     26
+#define ObjectTag_Enemy_1    27
 
 #endif /* Object_Tag_h */

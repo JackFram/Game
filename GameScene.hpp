@@ -17,6 +17,7 @@
 #include "Boss.hpp"
 #include "MenuScene.hpp"
 #include "ShopScene.hpp"
+#include "Enemy_1.hpp"
 #include <time.h>
 
 USING_NS_CC;

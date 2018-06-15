@@ -61,15 +61,16 @@ void Boss::logic(float dt)
 
 void Boss::getAttack(int harm)
 {
-    this->setiHP(this->getiHP()-harm);
+    this->setiHP(this->getiHP()-harm-(_exp/200)*30);
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     int res = 100*this->getiHP()/this->getmHP();
     pT->setPercentage(res);
     if(this->getiHP()<=0)
     {
         Player * player = ((Player *)(this->getParent()->getChildByTag(ObjectTag_Player)));
-        player->setmoney(player->getmoney()+500);
+        player->setmoney(player->getmoney()+1200);
         this->removeFromParent();
+        _exp += 131;
     }
 }
 

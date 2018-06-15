@@ -1,39 +1,39 @@
 //
-//  Enemy.cpp
+//  Enemy_1_1.cpp
 //  helloworld
 //
-//  Created by 张智昊 on 08/06/2018.
+//  Created by 张智昊 on 15/06/2018.
 //
 //
 
-#include "Enemy.hpp"
+#include "Enemy_1.hpp"
 
-Enemy::Enemy()
+Enemy_1::Enemy_1()
 {
-    this->setiHP(ENEMY_HP);
-    this->setmHP(ENEMY_HP);
+    this->setiHP(ENEMY_HP+130);
+    this->setmHP(ENEMY_HP+130);
 }
 
-Enemy::~Enemy()
+Enemy_1::~Enemy_1()
 {
     this->removeFromParent();
 }
 
-bool Enemy::init()
+bool Enemy_1::init()
 {
     if(!Node::init())
         return false;
     
     
-    Sprite * enemy = Sprite::create(PLAYER_GROVEL_PATH);
-    enemy->setScale(0.25);
-    enemy->setFlippedX(1);
-    this->addChild(enemy,20,ObjectTag_EnemySp);
+    Sprite * Enemy_1 = Sprite::create("Player/Enemy_1.png");
+    Enemy_1->setScale(0.5);
+    Enemy_1->setFlippedX(0);
+    this->addChild(Enemy_1,20,ObjectTag_EnemySp);
     
     
     // physic body added
     
-    auto body = PhysicsBody::createCircle((enemy->getContentSize().width) * 0.075f);
+    auto body = PhysicsBody::createCircle((Enemy_1->getContentSize().width) * 0.16f);
     body->getShape(0)->setFriction(0);
     body->getShape(0)->setRestitution(1.0f);
     body->setCategoryBitmask(1);    // 0001
@@ -43,7 +43,7 @@ bool Enemy::init()
     
     //add hp icon
     auto hpIcon = Hp_Icon::create();
-    hpIcon->setScale(0.25);
+    hpIcon->setScale(0.5);
     this->addChild(hpIcon, 10, ObjectTag_HP);
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     pT->setPercentage(100);
@@ -52,13 +52,13 @@ bool Enemy::init()
     return true;
 }
 
-void Enemy::logic(float dt)
+void Enemy_1::logic(float dt)
 {
     //让敌人保持静止
     this->getPhysicsBody()->setVelocity(Vec2(0, this->getPhysicsBody()->getVelocity().y));
 }
 
-void Enemy::getAttack(int harm)
+void Enemy_1::getAttack(int harm)
 {
     //被攻击时的逻辑
     this->setiHP(this->getiHP()-harm-(_exp/200)*30);
@@ -68,13 +68,13 @@ void Enemy::getAttack(int harm)
     if(this->getiHP()<=0)
     {
         Player * player = ((Player *)(this->getParent()->getChildByTag(ObjectTag_Player)));
-        player->setmoney(player->getmoney()+100);
+        player->setmoney(player->getmoney()+700);
         this->removeFromParent();
-        _exp += 35;
+        _exp += 73;
     }
 }
 
-void Enemy::Attack()
+void Enemy_1::Attack()
 {
     //AI进行攻击
     auto bullet = Bullet::create(BULLET0_PATH);
@@ -85,7 +85,7 @@ void Enemy::Attack()
     int angle = 45;
     double angel_x = cos((double(angle)/180)*M_PI);
     double angel_y = sin((double(angle)/180)*M_PI);
-    bullet->setPosition(Vec2(this->getPosition().x-BULLET_FIRE_DIS,this->getPosition().y+BULLET_FIRE_DIS));
+    bullet->setPosition(Vec2(this->getPosition().x-50,this->getPosition().y+30));
     bullet->getPhysicsBody()->applyImpulse(Vec2(-(BASE_STRENGTH*strength*angel_x), BASE_STRENGTH*strength*angel_y));
     this->getParent()->addChild(bullet);
 }

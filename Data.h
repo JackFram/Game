@@ -14,5 +14,6 @@ extern bool _weapon1;
 extern bool _weapon2;
 extern bool _weapon3;
 extern int _recover;
+extern int _exp;
 
 #endif /* Data_h */

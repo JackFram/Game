@@ -17,6 +17,7 @@ Player::Player()
     m_finished = false;//标志是否结束回合
     m_weapon_id = 1; //使用的武器id
     m_money = 800;//剩余钱数
+    m_exp = 0;
 }
 
 Player::~Player()
@@ -99,6 +100,21 @@ bool Player::init()
     ProgressTimer* pT = (ProgressTimer*)this->getChildByTag(ObjectTag_HP)->getChildByTag(ObjectTag_PT);
     pT->setPercentage(100);
     this->setTag(ObjectTag_Player);
+    
+    //add exp icon
+    auto expIcon = exp_Icon::create();
+    expIcon->setPosition(Vec2(-570,2000));
+    expIcon->setScale(1,1);
+    this->addChild(expIcon, 10, ObjectTag_Exp);
+    pT = (ProgressTimer*)this->getChildByTag(ObjectTag_Exp)->getChildByTag(ObjectTag_PT);
+    pT->setPercentage(0);
+    
+    //add level
+    auto level = Label::createWithTTF("", "fonts/arial.ttf", 30);
+    level->setScale(2.7);
+    level->setPosition(Vec2(-1350, 2000));
+    level->setTag(ObjectTag_ExpTag);
+    this->addChild(level,10);
     
     this->setfm(0);
 
